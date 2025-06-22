@@ -17,7 +17,7 @@ from praevion_async_core.utils.logging_utils import (
 )
 from paths import BASE_DIR, LOG_DIR, OSW_DIR
 
-# Select which acquisition function is to be used in simulation (currently supports EI and UCB)
+# Select which acquisition function is to be used in simulation (supports EI and UCB)
 desired_acquisition_function = "ucb"
 ACQUISITION_FUNCTION = os.getenv("ACQUISITION_FUNCTION", desired_acquisition_function)
 

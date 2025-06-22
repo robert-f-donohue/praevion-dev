@@ -6,3 +6,29 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# Simulation run artifacts
+*.osw
+*_run/
+run_logs/
+results/
+kpi_logs/
+archive/
+__pycache__/
+*.log
+*.zip
+*.csv
+*.jsonl
+
+# Jupyter & Python cache
+.ipynb_checkpoints/
+*.py[cod]
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.venv/
+venv/
