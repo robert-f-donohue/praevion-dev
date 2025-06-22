@@ -1,0 +1,42 @@
+{
+  "upgrade_wall_insulation": {
+    "measure_dir": "2-measures/insulation/upgrade_wall_insulation",
+    "argument_key": "r_value_option",
+    "options": ["None", "R-10", "R-15", "R-20", "R-25"]
+  },
+  "upgrade_roof_insulation": {
+    "measure_dir": "2-measures/insulation/upgrade_roof_insulation",
+    "argument_key": "r_value_option",
+    "options": ["None", "R-20", "R-30", "R-40"]
+  },
+  "upgrade_window_u_value": {
+    "measure_dir": "2-measures/windows/upgrade_window_u_value",
+    "argument_key": "u_value_option",
+    "options": ["None", "0.32", "0.28", "0.22", "0.18"]
+  },
+  "upgrade_window_shgc": {
+    "measure_dir": "2-measures/windows/upgrade_window_shgc",
+    "argument_key": "shgc_value_option",
+    "options": ["None", "0.25", "0.35", "0.40"]
+  },
+  "adjust_infiltration_rates": {
+    "measure_dir": "2-measures/air-sealing/adjust_infiltration_rates",
+    "argument_key": "infiltration_option",
+    "options": ["None", "0.80", "0.60", "0.40"]
+  },
+  "upgrade_hvac_mini_split": {
+    "measure_dir": "2-measures/hvac/upgrade_system_choice",
+    "argument_key": "hvac_option",
+    "options": ["None", "Mini-Split", "Packaged HP"]
+  },
+    "add_in_unit_erv": {
+    "measure_dir": "2-measures/ventilation/add_in_unit_erv",
+    "argument_key": "erv_option",
+    "options": ["None", "Add ERV"]
+  },
+  "upgrade_dhw_to_hpwh": {
+    "measure_dir": "2-measures/dhw/upgrade_dhw_to_hpwh",
+    "argument_key": "dhw_hpwh_option",
+    "options": ["None", "Upgrade"]
+  }
+}

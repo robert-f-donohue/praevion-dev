@@ -1,0 +1,22 @@
+{
+  "seed_file": "C:/00-deephyper-moo/1-openstudio-models/cluster4-existing-condition.osm",
+  "weather_file": "C:/00-deephyper-moo/1-openstudio-models/USA_MA_Boston-Logan.Intl.AP.725090_TMY3.epw",
+  "steps": [
+    {
+      "measure_dir_name": "upgrade_roof_insulation",
+      "arguments": {
+        "r_value_option": "R-20"
+      }
+    },
+    {
+      "measure_dir_name": "upgrade_hvac_system_choice",
+      "arguments": {
+        "hvac_option": "Mini-Split"
+      }
+    }
+  ],
+  "measure_paths": [
+    "C:/00-deephyper-moo/2-measures/insulation",
+    "C:/00-deephyper-moo/2-measures"
+  ]
+}

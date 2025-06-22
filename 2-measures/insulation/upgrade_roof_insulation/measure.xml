@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<measure>
+  <schema_version>3.1</schema_version>
+  <name>upgrade_roof_insulation</name>
+  <uid>4e04eabd-f20a-4338-9dfd-110772451771</uid>
+  <version_id>243f2ba9-85b1-4651-a92e-72293998c397</version_id>
+  <version_modified>2025-06-16T05:58:50Z</version_modified>
+  <xml_checksum>B6D1B2F0</xml_checksum>
+  <class_name>UpgradeRoofInsulation</class_name>
+  <display_name>Upgrade Roof Insulation</display_name>
+  <description>This measure upgrades all roof constructions by applying a user-specified insulation R-value (R-20, R-30, or R-40).</description>
+  <modeler_description>Creates a new single-layer massless construction and applies it to roofs. Uses IP R-value input converted to SI units for simulation.</modeler_description>
+  <arguments>
+    <argument>
+      <name>r_value_option</name>
+      <display_name>Select Target Roof R-Value</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
+          <value>R-20</value>
+          <display_name>R-20</display_name>
+        </choice>
+        <choice>
+          <value>R-30</value>
+          <display_name>R-30</display_name>
+        </choice>
+        <choice>
+          <value>R-40</value>
+          <display_name>R-40</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <outputs />
+  <provenances />
+  <tags>
+    <tag>Envelope.Insulation</tag>
+    <tag>Optimization.Ready</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Language</name>
+      <value>Ruby</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Optimization</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>LICENSE.md</filename>
+      <filetype>md</filetype>
+      <usage_type>license</usage_type>
+      <checksum>401334AE</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>10C3F7FA</checksum>
+    </file>
+    <file>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>905A0340</checksum>
+    </file>
+  </files>
+</measure>

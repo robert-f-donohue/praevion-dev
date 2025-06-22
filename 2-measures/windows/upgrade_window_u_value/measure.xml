@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<measure>
+  <schema_version>3.1</schema_version>
+  <name>upgrade_window_u_value</name>
+  <uid>4e04eabd-f20a-4338-9dfd-110772451771</uid>
+  <version_id>8b69f2f9-02dd-4ebc-a256-28dc44dca15f</version_id>
+  <version_modified>2025-06-16T06:28:01Z</version_modified>
+  <xml_checksum>B6D1B2F0</xml_checksum>
+  <class_name>UpgradeWindowUValue</class_name>
+  <display_name>Upgrade Window U Value</display_name>
+  <description>This measure upgrades window U-values by applying a user-specified U-value (U-0.32, U-0.28, U-0.22, or U-0.18).</description>
+  <modeler_description>Creates a new single-layer massless construction and applies it to windows. Uses IP R-value input converted to SI units for simulation.</modeler_description>
+  <arguments>
+    <argument>
+      <name>u_value_option</name>
+      <display_name>Select Target Window U-Value</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
+          <value>0.32</value>
+          <display_name>0.32</display_name>
+        </choice>
+        <choice>
+          <value>0.28</value>
+          <display_name>0.28</display_name>
+        </choice>
+        <choice>
+          <value>0.22</value>
+          <display_name>0.22</display_name>
+        </choice>
+        <choice>
+          <value>0.18</value>
+          <display_name>0.18</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <outputs />
+  <provenances />
+  <tags>
+    <tag>Envelope.Insulation</tag>
+    <tag>Optimization.Ready</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Language</name>
+      <value>Ruby</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Optimization</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>LICENSE.md</filename>
+      <filetype>md</filetype>
+      <usage_type>license</usage_type>
+      <checksum>401334AE</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>300D26BF</checksum>
+    </file>
+    <file>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B5D9890D</checksum>
+    </file>
+  </files>
+</measure>

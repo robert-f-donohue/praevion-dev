@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<measure>
+  <schema_version>3.1</schema_version>
+  <name>upgrade_dhw_to_hpwh</name>
+  <uid>dd02dbef-c65e-4185-a7e4-f06a693b5b14</uid>
+  <version_id>fca8feea-ea69-4c3d-8edb-334e4b0185cd</version_id>
+  <version_modified>2025-06-16T18:19:53Z</version_modified>
+  <xml_checksum>B6D1B2F0</xml_checksum>
+  <class_name>UpgradeDHWToHPWH</class_name>
+  <display_name>Upgrade DHW to HPWH</display_name>
+  <description>This measure upgrades the DHW system to a new central heat pump water heater.</description>
+  <modeler_description>Creates a new central heat pump water heater. Default performance curves are used for simplicity at this stage.</modeler_description>
+  <arguments>
+    <argument>
+      <name>dhw_hpwh_option</name>
+      <display_name>Select DHW Upgrade Option</display_name>
+      <type>Choice</type>
+      <required>true</required>
+      <model_dependent>false</model_dependent>
+      <default_value>None</default_value>
+      <choices>
+        <choice>
+          <value>None</value>
+          <display_name>None</display_name>
+        </choice>
+        <choice>
+          <value>Upgrade</value>
+          <display_name>Upgrade</display_name>
+        </choice>
+      </choices>
+    </argument>
+  </arguments>
+  <outputs />
+  <provenances />
+  <tags>
+    <tag>Envelope.Insulation</tag>
+    <tag>Optimization.Ready</tag>
+  </tags>
+  <attributes>
+    <attribute>
+      <name>Measure Type</name>
+      <value>ModelMeasure</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Measure Language</name>
+      <value>Ruby</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Apply Measure Now</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>OpenStudio Application</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Software Tool</name>
+      <value>Parametric Analysis Tool</value>
+      <datatype>string</datatype>
+    </attribute>
+    <attribute>
+      <name>Intended Use Case</name>
+      <value>Optimization</value>
+      <datatype>string</datatype>
+    </attribute>
+  </attributes>
+  <files>
+    <file>
+      <filename>LICENSE.md</filename>
+      <filetype>md</filetype>
+      <usage_type>license</usage_type>
+      <checksum>401334AE</checksum>
+    </file>
+    <file>
+      <filename>README.md</filename>
+      <filetype>md</filetype>
+      <usage_type>readme</usage_type>
+      <checksum>54B517AA</checksum>
+    </file>
+    <file>
+      <filename>measure.rb</filename>
+      <filetype>rb</filetype>
+      <usage_type>script</usage_type>
+      <checksum>B054B38A</checksum>
+    </file>
+  </files>
+</measure>
