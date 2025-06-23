@@ -36,8 +36,8 @@ def calculate_berdo_fine_from_factors(
             # Apply fine only if above threshold
             if cei_kg_per_ft2 > threshold:
                 excess = cei_kg_per_ft2 - threshold
-                fine_tonnes = (excess * gsf) / 1000  # kg to metric tons
-                fine_dollars = fine_tonnes * 234  # $234/ton CO2e
+                fine_tons = (excess * gsf) / 1000  # kg to metric tons
+                fine_dollars = fine_tons * 234  # $234/ton CO2e
                 total_fine_usd += fine_dollars
 
         return {"berdo_fine_usd": max(total_fine_usd, 1)}

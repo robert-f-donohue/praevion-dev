@@ -1,14 +1,14 @@
 calls:
-- max_evals: 1
+- max_evals: 200
   timeout: null
 search:
-  acq_func: UCB
+  acq_func: EI
   acq_func_kwargs:
-    kappa: 2.5
     scheduler:
-      kappa_final: 1.0
-      period: 80
+      period: 25
       type: periodic-exp-decay
+      xi_final: 0.001
+    xi: 0.01
   acq_optimizer: mixedga
   acq_optimizer_kwargs:
     filter_duplicated: true
@@ -18,7 +18,7 @@ search:
     n_points: 300
   checkpoint_history_to_csv: true
   evaluator:
-    num_workers: 1
+    num_workers: 10
     type: ProcessPoolEvaluator
   initial_point_generator: sobol
   initial_points: null
@@ -26,8 +26,8 @@ search:
   moo_lower_bounds: null
   moo_scalarization_strategy: Chebyshev
   moo_scalarization_weight: null
-  multi_point_strategy: qUCBd
-  n_initial_points: null
+  multi_point_strategy: cl_min
+  n_initial_points: 32
   objective_scaler: minmax
   problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "add_in_unit_erv",
     "choices": ["None", "Add ERV"], "weights": null, "default_value": "None", "meta":
@@ -35,7 +35,7 @@ search:
     ["None", "0.80", "0.60", "0.40"], "weights": null, "default_value": "None", "meta":
     null}, {"type": "categorical", "name": "upgrade_dhw_to_hpwh", "choices": ["None",
     "Upgrade"], "weights": null, "default_value": "None", "meta": null}, {"type":
-    "categorical", "name": "upgrade_hvac_mini_split", "choices": ["None", "Mini-Split",
+    "categorical", "name": "upgrade_hvac_system_choice", "choices": ["None", "Mini-Split",
     "Packaged HP"], "weights": null, "default_value": "None", "meta": null}, {"type":
     "categorical", "name": "upgrade_roof_insulation", "choices": ["None", "R-20",
     "R-30", "R-40"], "weights": null, "default_value": "None", "meta": null}, {"type":

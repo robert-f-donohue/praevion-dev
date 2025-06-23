@@ -1,13 +1,13 @@
 EI_CONFIG = {
     "initial_point_generator": "sobol",     # Quasi-random for good initial spread across space
-    "n_initial_points": 16,                 # Sobol requires number of samples to be a power of 2
+    "n_initial_points": 32,                 # Sobol requires number of samples to be a power of 2
     "acq_func": "EI",                       # Use UCB with decaying exploration for better convergence
     "acq_func_kwargs": {
-        "kappa": 2.5,                       # Start with strong exploration
-        "scheduler": {                      # Add scheduler to taper exploration
+        "xi": 0.01,
+        "scheduler": {
             "type": "periodic-exp-decay",
-            "period": 80,                   # Every 80 evaluations, apply decay
-            "kappa_final": 1.0              # Don't decay all the way to greediness (0.25 is too aggressive)
+            "period": 25,
+            "xi_final": 0.001           # Higher xi = more exploration. EI is greedy by default.
         }
     },
     "acq_optimizer": "mixedga",         # Handles discrete + continuous search spaces well
@@ -18,7 +18,9 @@ EI_CONFIG = {
         "filter_failures": "ignore",    # Failures get immediately removed
         "max_failures": 200             # Cap the retry window to prevent stalls
     },
-    "multi_point_strategy": "qUCBd",            # Vectorized + decayed UCB for smart parallel batch selection
+    "surrogate_model": "ET",
+    "solution_selection": "argmax_obs",
+    "multi_point_strategy": "cl_min",           # Enables parallel EI
     "moo_scalarization_strategy": "Chebyshev",  # Balances Pareto front edge discovery
     "moo_scalarization_weight": None,           # Randomized weights for full Pareto front coverage
     "objective_scaler": "minmax",               # Normalize for equal importance across KPIs

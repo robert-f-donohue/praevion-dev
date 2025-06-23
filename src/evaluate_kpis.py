@@ -53,7 +53,8 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     # Extract surface and zone metrics
     surface_areas = extract_construction_areas(csv_path)
     zone_data = extract_zone_area(csv_path)
-    total_floor_area_ft2 = zone_data['total_floor_area_m2'] * 10.7639
+    total_floor_area_m2 = zone_data['total_floor_area_m2']
+    total_floor_area_ft2 = total_floor_area_m2 * 10.7639
     apartment_floor_area_m2 = zone_data['apartment_floor_area_m2']
     apartment_count = zone_data['apartment_count']
 
@@ -64,6 +65,7 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     ec = calculate_embodied_carbon_from_df(
         selections=selections,
         surface_areas=surface_areas,
+        total_floor_area=total_floor_area_m2,
         apartment_floor_area=apartment_floor_area_m2,
         apartment_count=apartment_count,
         df_ec=df_ec

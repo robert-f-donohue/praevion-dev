@@ -3,8 +3,8 @@
   <schema_version>3.1</schema_version>
   <name>upgrade_roof_insulation</name>
   <uid>4e04eabd-f20a-4338-9dfd-110772451771</uid>
-  <version_id>243f2ba9-85b1-4651-a92e-72293998c397</version_id>
-  <version_modified>2025-06-16T05:58:50Z</version_modified>
+  <version_id>76334857-c0fb-4844-b9d1-4bc021287d92</version_id>
+  <version_modified>2025-06-22T18:35:00Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>UpgradeRoofInsulation</class_name>
   <display_name>Upgrade Roof Insulation</display_name>
@@ -17,11 +17,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>R-15</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>R-15</value>
+          <display_name>R-15</display_name>
         </choice>
         <choice>
           <value>R-20</value>
@@ -93,7 +93,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>905A0340</checksum>
+      <checksum>F1642036</checksum>
     </file>
   </files>
 </measure>

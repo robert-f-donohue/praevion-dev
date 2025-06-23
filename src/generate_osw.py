@@ -33,8 +33,7 @@ def generate_osw_from_config(config, ecm_options_path, output_path, seed_file, w
     preferred_order = [
         "upgrade_wall_insulation",
         "upgrade_roof_insulation",
-        "upgrade_window_u_value",
-        "upgrade_window_shgc",
+        "upgrade_window_construction",
         "adjust_infiltration_rates",
         "upgrade_hvac_system_choice",
         "add_in_unit_erv",

@@ -19,13 +19,13 @@ class UpgradeDHWToHPWH < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for whether or not to add a mini split ductless heat pump to the zones
         choices = OpenStudio::StringVector.new
-        choices << 'None'
+        choices << 'Baseline'
         choices << 'Upgrade'
 
         # set your selection default to None
         upgrade_option = OpenStudio::Measure::OSArgument.makeChoiceArgument('dhw_hpwh_option', choices, true)
         upgrade_option.setDisplayName('Select DHW Upgrade Option')
-        upgrade_option.setDefaultValue('None')
+        upgrade_option.setDefaultValue('Baseline') # Default to Baseline
         args << upgrade_option 
 
         # return argument vector
@@ -42,7 +42,7 @@ class UpgradeDHWToHPWH < OpenStudio::Measure::ModelMeasure
         upgrade_option  = runner.getStringArgumentValue('dhw_hpwh_option', user_arguments)
 
         # return early if None is selected
-        if upgrade_option == 'None'
+        if upgrade_option == 'Baseline'
             runner.registerInfo('No heat pump water heater added.')
             return true
         end

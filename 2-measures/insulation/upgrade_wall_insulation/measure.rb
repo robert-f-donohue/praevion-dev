@@ -2,8 +2,8 @@
 # UpgradeWallInsulation 
 #
 # Author:  Robert Donohue, enviENERGY Studio LLC
-# Version: 0.1.0
-# Date:    2025-06-13
+# Version: 0.2.0
+# Date:    2025-06-22
 # -----------------------------------------------------------------------------------------------
 
 
@@ -18,7 +18,7 @@ class UpgradeWallInsulation < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for wall R-value
         choices = OpenStudio::StringVector.new
-        choices << 'None'
+        choices << 'R-7.5'  # Baseline
         choices << 'R-10'
         choices << 'R-15'
         choices << 'R-20'
@@ -27,7 +27,7 @@ class UpgradeWallInsulation < OpenStudio::Measure::ModelMeasure
         # set your selection default to None
         r_value_option = OpenStudio::Measure::OSArgument.makeChoiceArgument('r_value_option', choices, true)
         r_value_option.setDisplayName('Select Target Wall Insulation R-Value')
-        r_value_option.setDefaultValue('None')
+        r_value_option.setDefaultValue('R-7.5')
         args << r_value_option
 
         # return argument vector
@@ -44,7 +44,7 @@ class UpgradeWallInsulation < OpenStudio::Measure::ModelMeasure
         r_value_option = runner.getStringArgumentValue('r_value_option', user_arguments)
 
         # return early if None is selected
-        if r_value_option == 'None'
+        if r_value_option == 'R-7.5'
             runner.registerInfo('No change made to exterior wall insulation.')
             return true
         end

@@ -1,13 +1,14 @@
 import os
+import json
 import pandas as pd
 from datetime import datetime, timezone
 
 from deephyper.evaluator import Evaluator
+from deephyper.hpo import CBO
 from praevion_async_core.paths import RESULTS_ARCHIVE
 from praevion_async_core.problem import problem
-from praevion_async_core.utils.constraint_aware_cbo import ConstraintAwareCBO
+# from praevion_async_core.utils.constraint_aware_cbo import ConstraintAwareCBO
 from praevion_async_core.utils.run_function_async import run_function, best_log
-from praevion_async_core.utils.search_utils import is_valid_config
 from praevion_async_core.utils.logging_utils import (
     clean_batch_folders,
     save_results_csv,
@@ -15,7 +16,7 @@ from praevion_async_core.utils.logging_utils import (
     archive_logs,
     archive_osws
 )
-from paths import BASE_DIR, LOG_DIR, OSW_DIR
+from paths import BASE_DIR, INPUT_DIR, LOG_DIR, OSW_DIR
 
 # Select which acquisition function is to be used in simulation (supports EI and UCB)
 desired_acquisition_function = "ucb"
@@ -43,17 +44,22 @@ def main():
     # 🧼 Clean up working directories to prepare for this run
     clean_batch_folders(project_root=".")
 
+    # Add seed config files
+    seed_path = os.path.join(INPUT_DIR, "seed_configs", "seed_configs.json")
+    with open(seed_path, 'r') as f:
+        seed_configs = json.load(f)
+
     # ⚙️ Launch DeepHyper evaluation context
-    num_cpu_workers = 1
+    num_cpu_workers = 10
     with Evaluator.create(run_function=run_function, method="process",
                           method_kwargs={"num_workers": num_cpu_workers}) as evaluator:
 
         # 🧠 Instantiate search strategy (CBO)
-        search = ConstraintAwareCBO(
+        search = CBO(
             problem=problem,
             evaluator=evaluator,
-            is_valid_config=is_valid_config,
             random_state=42,
+            initial_points=seed_configs,
             **CONFIG
         )
 
@@ -62,7 +68,7 @@ def main():
             search.save_results = False
 
         # 🔍 Start the search
-        MAX_EVALS = 1
+        MAX_EVALS = 300
         print(f"🔍 Starting search with max_evals = {MAX_EVALS}")
         search.search(max_evals=MAX_EVALS)
 
@@ -79,7 +85,7 @@ def main():
         archive_osws(OSW_DIR, os.path.join(RESULTS_ARCHIVE, "old_osw_files"))
 
         # 🧹 Remove internal DeepHyper results.csv
-        internal_csv = os.path.join(BASE_DIR, "results.csv")
+        internal_csv = os.path.join('..', BASE_DIR, "results.csv")
         if os.path.exists(internal_csv):
             os.remove(internal_csv)
             print("🧹 Removed internal DeepHyper results.csv file to avoid clutter.")

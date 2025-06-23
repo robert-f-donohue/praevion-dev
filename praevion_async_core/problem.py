@@ -19,9 +19,8 @@ for measure, data in ecm_options.items():
     options = data["options"]
     problem.add_hyperparameter(options, measure)
 
-# Initialize the MOO with 2 variables
-problem.num_objectives = 2
-problem.maximize_objectives = [False, False]
+# Initialize the MOO with 3 variables
+problem.num_objectives = 3
 
 # Print the search space if run as a script (for debugging or CLI use)
 if __name__ == "__main__":
