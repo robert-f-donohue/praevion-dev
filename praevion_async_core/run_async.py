@@ -59,12 +59,15 @@ def main():
             problem=problem,
             evaluator=evaluator,
             random_state=42,
-            initial_points = seed_configs,
-            n_initial_points=64,  # Sobol requires number of samples to be a power of 2
+            n_initial_points=76,  # Sobol requires number of samples to be a power of 2
+            initial_points=seed_configs,
             **CONFIG
         )
 
-
+        print(f"📊 Initial configs seeded: {len(seed_configs)}")
+        print(f"🧠 Starting with kappa = {CONFIG['acq_func_kwargs']['kappa']}")
+        print(
+            f"🔁 Decaying kappa every {CONFIG['acq_func_kwargs']['scheduler']['period']} runs to {CONFIG['acq_func_kwargs']['scheduler']['kappa_final']}")
 
         # Prevent DeepHyper from auto-saving results
         if hasattr(search, "save_results"):

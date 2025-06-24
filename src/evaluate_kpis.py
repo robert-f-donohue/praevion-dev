@@ -10,13 +10,14 @@ from src.embodied import calculate_embodied_carbon_from_df
 from src.operational import calculate_operational_emissions
 from src.cost_berdo import calculate_berdo_fine_from_factors
 from src.cost_material import calculate_material_cost_from_df
+from src.cost_utility import calculate_discounted_utility_costs
 from src.run_simulation import run_osw_and_get_csv_path
 from src.generate_osw import generate_osw_from_config
 
 from praevion_async_core.paths import RUN_LOGS_DIR
 from praevion_async_core.utils.logging_utils import clean_output_dir
 
-def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path, mat_cost_input_path):
+def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path, mat_cost_input_path, utility_rate_input_path):
     """
     Evaluates key performance indicators (KPIs) for a completed OpenStudio simulation run.
 
@@ -31,6 +32,7 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         oc_input_path (str): Path to the operational emissions factor CSV (per fuel type).
         threshold_input_path (str): Path to multifamily BERDO CEI thresholds CSV.
         mat_cost_input_path (str): Path to material costs CSV.
+        utility_rate_input_path (str): Path to utility rates CSV.
 
     Returns:
         dict: Flattened dictionary containing:
@@ -45,6 +47,7 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     df_oc = pd.read_csv(oc_input_path)
     df_thresholds = pd.read_csv(threshold_input_path)
     df_material = pd.read_csv(mat_cost_input_path)
+    df_rates = pd.read_csv(utility_rate_input_path)
 
     # Ensure consistent naming for embodied carbon calculations by enforcing all measures be lower case
     df_ec["measure_name"] = df_ec["measure_name"].str.strip().str.lower()
@@ -82,6 +85,12 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         natural_gas_mmbtu=energy['natural_gas_mmbtu'],
         df_factors=df_oc
     )
+    
+    utility_cost_usd = calculate_discounted_utility_costs(
+        electricity_mmbtu=energy['electricity_mmbtu'],
+        natural_gas_mmbtu=energy['natural_gas_mmbtu'],
+        df_rates=df_rates
+    )
 
     fine_usd = calculate_berdo_fine_from_factors(
         electricity_mmbtu=energy['electricity_mmbtu'],
@@ -108,10 +117,11 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         **ec,
         **oc,
         **fine_usd,
-        **mat_cost
+        **mat_cost,
+        **utility_cost_usd
     }
 
-def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df_material):
+def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df_material, df_rates):
     """
     Run a full simulation + KPI evaluation pipeline from a single ECM config dictionary.
 
@@ -121,6 +131,7 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df
         df_embodied (str): Path to embodied carbon inputs CSV.
         df_thresholds (str): Path to BERDO threshold CSV.
         df_material (str): Path to material costs CSV.
+        df_rates (str): Path to utility rates CSV.
 
     Returns:
         dict: Contains both total and component-level metrics for EC, OC, BERDO fines, and material, as well as file paths and selections.
@@ -176,5 +187,6 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df
         ec_input_path=df_embodied,
         oc_input_path=df_factors,
         threshold_input_path=df_thresholds,
-        mat_cost_input_path=df_material
+        mat_cost_input_path=df_material,
+        utility_rate_input_path=df_rates
     )

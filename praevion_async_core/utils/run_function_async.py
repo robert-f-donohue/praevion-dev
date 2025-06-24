@@ -72,7 +72,8 @@ def run_function(config: dict):
             df_factors=os.path.join(INPUT_DIR, "operational-carbon-inputs.csv"),
             df_embodied=os.path.join(INPUT_DIR, "embodied-carbon-inputs.csv"),
             df_thresholds=os.path.join(INPUT_DIR, "berdo-thresholds-multifamily.csv"),
-            df_material=os.path.join(INPUT_DIR, "material-cost-inputs.csv")
+            df_material=os.path.join(INPUT_DIR, "material-cost-inputs.csv"),
+            df_rates=os.path.join(INPUT_DIR, "utility-cost-inputs.csv")
         )
 
         # Combine total embodied and operational carbon for engineered total carbon metric
@@ -80,6 +81,7 @@ def run_function(config: dict):
         embodied_carbon_kg = kpis["total_ec_kg"] if kpis["total_ec_kg"] > 0 else 1.0
         berdo_fine_usd = kpis["berdo_fine_usd"]
         material_cost_usd = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
+        utility_cost_usd = kpis["discounted_utility_cost_usd"] if kpis["discounted_utility_cost_usd"] > 0 else 1.0
 
         # Theoretical maximums for normalization
         max_oc = 5_552_000
