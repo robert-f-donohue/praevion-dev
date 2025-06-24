@@ -1,0 +1,40 @@
+measure_name,argument_key,argument_value,Material Category,Material Subcategory,Cost ($/unit),unit_mapping,R_per_in,insulation_thickness
+adjust_infiltration_rates,default,1,,,0,wall_area,,
+adjust_infiltration_rates,default,0.9,Air Barrier,Liquid-Applied Air Barrier,3.44448,wall_area,NaN,NaN
+adjust_infiltration_rates,default,0.8,Air Barrier,Liquid-Applied Air Barrier,4.41324,wall_area,NaN,NaN
+adjust_infiltration_rates,default,0.75,Air Barrier,Liquid-Applied Air Barrier,4.8438,wall_area,NaN,NaN
+adjust_infiltration_rates,default,0.7,Air Barrier,Liquid-Applied Air Barrier,9.25704,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-10,Wood Sheathing,"Oriented Strand Board (OSB) - 1/2""",11.77,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-10,Insulation,Low density mineral wool board (R/in=4.1),10.61,wall_area,4.2,1
+upgrade_wall_insulation,default,R-10,Gypsum Board,"Glass-Mat Gypsum Board - 5/8""",19.27,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-15,Wood Sheathing,"Oriented Strand Board (OSB) - 1/2""",11.77,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-15,Insulation,Low density mineral wool board (R/in=4.1),10.61,wall_area,4.2,2
+upgrade_wall_insulation,default,R-15,Gypsum Board,"Glass-Mat Gypsum Board - 5/8""",19.27,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-20,Wood Sheathing,"Oriented Strand Board (OSB) - 1/2""",11.77,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-20,Insulation,Low density mineral wool board (R/in=4.1),10.61,wall_area,4.2,3
+upgrade_wall_insulation,default,R-20,Gypsum Board,"Glass-Mat Gypsum Board - 5/8""",19.27,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-25,Wood Sheathing,"Oriented Strand Board (OSB) - 1/2""",11.77,wall_area,NaN,NaN
+upgrade_wall_insulation,default,R-25,Insulation,Low density mineral wool board (R/in=4.1),10.61,wall_area,4.2,4
+upgrade_wall_insulation,default,R-25,Gypsum Board,"Glass-Mat Gypsum Board - 5/8""",19.27,wall_area,NaN,NaN
+upgrade_roof_insulation,default,R-20,Membrane Roofing,Single Ply TPO Membrane Roofing (60 mils),76.85,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-20,Gypsum Board,"Glass-Mat Gypsum Board (5/8"")",19.27,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-20,Insulation,Polyiso - roof - CFG facer (R/in=6.0),9.69,roof_area,6,3.5
+upgrade_roof_insulation,default,R-20,Gypsum Board,"Gypsum Board - 5/8"" Type X",17.55,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-30,Membrane Roofing,Single Ply TPO Membrane Roofing (60 mils),76.85,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-30,Gypsum Board,"Glass-Mat Gypsum Board (5/8"")",19.27,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-30,Insulation,Polyiso - roof - CFG facer (R/in=6.0),9.69,roof_area,6,5
+upgrade_roof_insulation,default,R-30,Gypsum Board,"Gypsum Board - 5/8"" Type X",17.55,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-40,Membrane Roofing,Single Ply TPO Membrane Roofing (60 mils),76.85,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-40,Gypsum Board,"Glass-Mat Gypsum Board (5/8"")",19.27,roof_area,NaN,NaN
+upgrade_roof_insulation,default,R-40,Insulation,Polyiso - roof - CFG facer (R/in=6.0),9.69,roof_area,6,6.5
+upgrade_roof_insulation,default,R-40,Gypsum Board,"Gypsum Board - 5/8"" Type X",17.55,roof_area,NaN,NaN
+upgrade_window_construction,default,"baseline (U-0.59, SHGC-0.40)",,,0,window_area,,
+upgrade_window_construction,default,"double_clear_lowE (U-0.32, SHGC-0.40)",Window,Double-Pane Window (U-0.32),473.61,window_area,NaN,NaN
+upgrade_window_construction,default,"double_tinted_lowE (U-0.30, SHGC-0.30)",Window,Triple-Pane Window (U-0.28),484.38,window_area,NaN,NaN
+upgrade_window_construction,default,"triple_lowE (U-0.20, SHGC-0.25)",Window,Triple-Pane Window (U-0.18),577.66,window_area,NaN,NaN
+upgrade_hvac_system_choice,default,Condensing Boiler,Equipment,Central Condensing Gas Boiler (92% eff.),30000,per_building,,
+upgrade_hvac_system_choice,default,Mini-Split,Equipment,Wall-Mounted Ductless Mini-Split + ERV (1 kg/m2),12500,per_unit,NaN,NaN
+upgrade_hvac_system_choice,default,Mini-Split,Equipment,In-Unit ERV,1800,per_unit,NaN,NaN
+upgrade_hvac_system_choice,default,Packaged HP,Equipment,Wall-Mounted Packaged Heat Pump + ERV (1 kg/m2),10000,per_unit,NaN,NaN
+upgrade_hvac_system_choice,default,Packaged HP,Equipment,In-Unit ERV,1800,per_unit,NaN,NaN
+upgrade_dhw_to_hpwh,default,Upgrade,Equipment,Central CO2 Heat Pump Water Heater,12000,per_building,NaN,NaN

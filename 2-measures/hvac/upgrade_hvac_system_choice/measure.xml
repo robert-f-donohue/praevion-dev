@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <measure>
   <schema_version>3.1</schema_version>
-  <error>Failed to infer measure name from 'C:/praevion_dev_local/2-measures/hvac/upgrade_hvac_system_choice/measure.rb'</error>
   <name>upgrade_hvac_system_choice</name>
   <uid>3381f80c-a5e3-4084-8f97-bcecf3d38930</uid>
-  <version_id>0ad921a4-208f-4928-a0b0-4e170dac6976</version_id>
-  <version_modified>2025-06-23T15:40:47Z</version_modified>
+  <version_id>9941f4c7-f235-4626-8a0d-55bd45cd927e</version_id>
+  <version_modified>2025-06-23T17:48:20Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>UpgradeHVACSystemChoice</class_name>
   <display_name>Upgrade HVAC System Choice</display_name>
@@ -23,6 +22,10 @@
         <choice>
           <value>Baseline</value>
           <display_name>Baseline</display_name>
+        </choice>
+        <choice>
+          <value>Condensing Boiler</value>
+          <display_name>Condensing Boiler</display_name>
         </choice>
         <choice>
           <value>Mini-Split</value>
@@ -90,7 +93,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>D6C2B4AB</checksum>
+      <checksum>9562B9A6</checksum>
     </file>
   </files>
 </measure>

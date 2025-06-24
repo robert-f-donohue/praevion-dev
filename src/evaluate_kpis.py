@@ -9,13 +9,14 @@ from src.parser import extract_total_energy, extract_zone_area, extract_construc
 from src.embodied import calculate_embodied_carbon_from_df
 from src.operational import calculate_operational_emissions
 from src.cost_berdo import calculate_berdo_fine_from_factors
+from src.cost_material import calculate_material_cost_from_df
 from src.run_simulation import run_osw_and_get_csv_path
 from src.generate_osw import generate_osw_from_config
 
 from praevion_async_core.paths import RUN_LOGS_DIR
 from praevion_async_core.utils.logging_utils import clean_output_dir
 
-def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path):
+def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path, mat_cost_input_path):
     """
     Evaluates key performance indicators (KPIs) for a completed OpenStudio simulation run.
 
@@ -29,6 +30,7 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         ec_input_path (str): Path to the embodied carbon data CSV (e.g. component GWP).
         oc_input_path (str): Path to the operational emissions factor CSV (per fuel type).
         threshold_input_path (str): Path to multifamily BERDO CEI thresholds CSV.
+        mat_cost_input_path (str): Path to material costs CSV.
 
     Returns:
         dict: Flattened dictionary containing:
@@ -42,10 +44,14 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     df_ec = pd.read_csv(ec_input_path)
     df_oc = pd.read_csv(oc_input_path)
     df_thresholds = pd.read_csv(threshold_input_path)
+    df_material = pd.read_csv(mat_cost_input_path)
 
     # Ensure consistent naming for embodied carbon calculations by enforcing all measures be lower case
     df_ec["measure_name"] = df_ec["measure_name"].str.strip().str.lower()
     df_ec["argument_value"] = df_ec["argument_value"].astype(str).str.strip().str.lower()
+
+    df_material["measure_name"] = df_material["measure_name"].str.strip().str.lower()
+    df_material["argument_value"] = df_material["argument_value"].astype(str).str.strip().str.lower()
 
     # Parse .osw for selections
     selections = extract_measure_selections(osw_path)
@@ -85,6 +91,15 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         df_thresholds=df_thresholds
     )
 
+    mat_cost = calculate_material_cost_from_df(
+        selections=selections,
+        surface_areas=surface_areas,
+        total_floor_area=total_floor_area_m2,
+        apartment_floor_area=apartment_floor_area_m2,
+        apartment_count=apartment_count,
+        df_material=df_material
+    )
+
     # Combine everything into one dictionary
     return {
         "osw_path": os.path.abspath(osw_path),
@@ -92,10 +107,11 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         **selections,
         **ec,
         **oc,
-        **fine_usd
+        **fine_usd,
+        **mat_cost
     }
 
-def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
+def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df_material):
     """
     Run a full simulation + KPI evaluation pipeline from a single ECM config dictionary.
 
@@ -104,9 +120,10 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
         df_factors (str): Path to operational carbon inputs CSV.
         df_embodied (str): Path to embodied carbon inputs CSV.
         df_thresholds (str): Path to BERDO threshold CSV.
+        df_material (str): Path to material costs CSV.
 
     Returns:
-        dict: Contains both total and component-level metrics for EC, OC, and Cost, as well as file paths and selections.
+        dict: Contains both total and component-level metrics for EC, OC, BERDO fines, and material, as well as file paths and selections.
     """
 
     # Setup input file paths
@@ -147,7 +164,8 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
                 "csv_path": None,
                 "total_emissions_kg": float("inf"),
                 "total_ec_kg": float("inf"),
-                "berdo_fine_usd": float("inf")
+                "berdo_fine_usd": float("inf"),
+                "material_cost_usd": float("inf")
             }
         else:
             raise
@@ -157,5 +175,6 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
         csv_path=csv_path,
         ec_input_path=df_embodied,
         oc_input_path=df_factors,
-        threshold_input_path=df_thresholds
+        threshold_input_path=df_thresholds,
+        mat_cost_input_path=df_material
     )

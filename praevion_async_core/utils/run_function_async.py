@@ -70,29 +70,36 @@ def run_function(config: dict):
             config,
             df_factors=os.path.join(INPUT_DIR, "operational-carbon-inputs.csv"),
             df_embodied=os.path.join(INPUT_DIR, "embodied-carbon-inputs.csv"),
-            df_thresholds=os.path.join(INPUT_DIR, "berdo-thresholds-multifamily.csv")
+            df_thresholds=os.path.join(INPUT_DIR, "berdo-thresholds-multifamily.csv"),
+            df_material=os.path.join(INPUT_DIR, "material-costs.csv")
         )
 
         # Combine total embodied and operational carbon for engineered total carbon metric
         operational_carbon_kg = kpis["total_emissions_kg"]
-        embodied_carbon_kg = kpis["total_ec_kg"]
+        embodied_carbon_kg = kpis["total_ec_kg"] if kpis["total_ec_kg"] > 0 else 1.0
         berdo_fine_usd = kpis["berdo_fine_usd"]
+        material_cost_usd = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
 
         # Theoretical maximums for normalization
-        max_oc = 5_600_000
-        max_ec = 466_000
-        max_fine = 490_000
+        max_oc = 5_552_000
+        max_ec = 464_000
+        max_fine = 487_000
+        max_mat_cost = 630_000
+
+        # Theoretical minimums for operational carbon emissions
+        min_oc = 1_508_000
 
         # Normalize objective values
-        norm_operational_carbon_kg = operational_carbon_kg / max_oc
-        norm_embodied_carbon_kg = embodied_carbon_kg / max_ec if embodied_carbon_kg > 0 else 1.0
-        norm_berdo_fine_usd = berdo_fine_usd / max_fine if berdo_fine_usd > 0 else 1.0
+        OC_normalized = (operational_carbon_kg - min_oc) / (max_oc - min_oc)
+        EC_normalized = embodied_carbon_kg / max_ec
+        Fine_normalized = berdo_fine_usd / max_fine
+        Material_normalized = material_cost_usd / max_mat_cost
 
         # Gather the objective values to be fed in the MOO engine
         objective_values = [
-            -norm_operational_carbon_kg,
-            -norm_embodied_carbon_kg,
-            -norm_berdo_fine_usd
+            -OC_normalized,
+            -EC_normalized,
+            -Fine_normalized
         ]
 
         # Structure successful kpi_log entry
@@ -105,6 +112,7 @@ def run_function(config: dict):
                 "operational_carbon_kg": operational_carbon_kg,
                 "embodied_carbon_kg": embodied_carbon_kg,
                 "berdo_fine_usd": berdo_fine_usd,
+                "material_cost_usd": material_cost_usd
             }
         }
 
@@ -112,8 +120,9 @@ def run_function(config: dict):
         best_log.append({
             "timestamp": timestamp,
             "run_id": run_id,
-            "oc_ec_total": objective_values[0],
-            "cost": objective_values[1]
+            "oc_total": objective_values[0],
+            "ec_total": objective_values[1],
+            "cost_total": objective_values[2]
         })
         with open(kpi_log_path, "a") as f:
             f.write(json.dumps(log_entry) + "\n")
@@ -133,7 +142,7 @@ def run_function(config: dict):
         with open(kpi_log_path, "a") as f:
             f.write(json.dumps(log_entry) + "\n")
 
-        return {"objective": [sys.float_info.max] * 2, "metadata": log_entry}
+        return {"objective": [sys.float_info.max] * 3, "metadata": log_entry}
 
 def run_function_deduplicated(config):
     config_hash = hash_config(config)

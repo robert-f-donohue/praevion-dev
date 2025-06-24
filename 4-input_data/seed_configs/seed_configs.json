@@ -1,98 +1,98 @@
 [
     {
-      "upgrade_wall_insulation.r_value_option": "R-7.5",
-      "upgrade_roof_insulation.r_value_option": "R-15",
-      "adjust_infiltration_rates.infiltration_option": "1.00",
-      "upgrade_window_construction.glazing_choice": "baseline (U-0.59, SHGC-0.40)",
-      "upgrade_hvac_system_choice.hvac_choice": "Baseline",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-7.5",
+      "upgrade_roof_insulation": "R-15",
+      "adjust_infiltration_rates": "1.00",
+      "upgrade_window_construction": "baseline (U-0.59, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Baseline",
+      "upgrade_dhw_to_hpwh": "Baseline"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-25",
-      "upgrade_roof_insulation.r_value_option": "R-40",
-      "adjust_infiltration_rates.infiltration_option": "0.70",
-      "upgrade_window_construction.glazing_choice": "triple_lowE (U-0.20, SHGC-0.25)",
-      "upgrade_hvac_system_choice.hvac_choice": "Mini-Split",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-25",
+      "upgrade_roof_insulation": "R-40",
+      "adjust_infiltration_rates": "0.70",
+      "upgrade_window_construction": "triple_lowE (U-0.20, SHGC-0.25)",
+      "upgrade_hvac_system_choice": "Mini-Split",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-10",
-      "upgrade_roof_insulation.r_value_option": "R-20",
-      "adjust_infiltration_rates.infiltration_option": "0.75",
-      "upgrade_window_construction.glazing_choice": "double_clear_lowE (U-0.32, SHGC-0.40)",
-      "upgrade_hvac_system_choice.hvac_choice": "Mini-Split",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-10",
+      "upgrade_roof_insulation": "R-20",
+      "adjust_infiltration_rates": "0.75",
+      "upgrade_window_construction": "double_clear_lowE (U-0.32, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Mini-Split",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-15",
-      "upgrade_roof_insulation.r_value_option": "R-30",
-      "adjust_infiltration_rates.infiltration_option": "0.80",
-      "upgrade_window_construction.glazing_choice": "double_tinted_lowE (U-0.30, SHGC-0.30)",
-      "upgrade_hvac_system_choice.hvac_choice": "Condensing Boiler",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-15",
+      "upgrade_roof_insulation": "R-30",
+      "adjust_infiltration_rates": "0.80",
+      "upgrade_window_construction": "double_tinted_lowE (U-0.30, SHGC-0.30)",
+      "upgrade_hvac_system_choice": "Condensing Boiler",
+      "upgrade_dhw_to_hpwh": "Baseline"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-20",
-      "upgrade_roof_insulation.r_value_option": "R-30",
-      "adjust_infiltration_rates.infiltration_option": "0.70",
-      "upgrade_window_construction.glazing_choice": "triple_lowE (U-0.20, SHGC-0.25)",
-      "upgrade_hvac_system_choice.hvac_choice": "Packaged HP",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-20",
+      "upgrade_roof_insulation": "R-30",
+      "adjust_infiltration_rates": "0.70",
+      "upgrade_window_construction": "triple_lowE (U-0.20, SHGC-0.25)",
+      "upgrade_hvac_system_choice": "Packaged HP",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-7.5",
-      "upgrade_roof_insulation.r_value_option": "R-15",
-      "adjust_infiltration_rates.infiltration_option": "0.90",
-      "upgrade_window_construction.glazing_choice": "Baseline",
-      "upgrade_hvac_system_choice.hvac_choice": "Mini-Split",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-7.5",
+      "upgrade_roof_insulation": "R-15",
+      "adjust_infiltration_rates": "0.90",
+      "upgrade_window_construction": "baseline (U-0.59, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Mini-Split",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-7.5",
-      "upgrade_roof_insulation.r_value_option": "R-15",
-      "adjust_infiltration_rates.infiltration_option": "1.00",
-      "upgrade_window_construction.glazing_choice": "double_tinted_lowE (U-0.30, SHGC-0.30)",
-      "upgrade_hvac_system_choice.hvac_choice": "Baseline",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-7.5",
+      "upgrade_roof_insulation": "R-15",
+      "adjust_infiltration_rates": "1.00",
+      "upgrade_window_construction": "double_tinted_lowE (U-0.30, SHGC-0.30)",
+      "upgrade_hvac_system_choice": "Baseline",
+      "upgrade_dhw_to_hpwh": "Baseline"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-25",
-      "upgrade_roof_insulation.r_value_option": "R-40",
-      "adjust_infiltration_rates.infiltration_option": "0.70",
-      "upgrade_window_construction.glazing_choice": "triple_lowE (U-0.20, SHGC-0.25)",
-      "upgrade_hvac_system_choice.hvac_choice": "Baseline",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-25",
+      "upgrade_roof_insulation": "R-40",
+      "adjust_infiltration_rates": "0.70",
+      "upgrade_window_construction": "triple_lowE (U-0.20, SHGC-0.25)",
+      "upgrade_hvac_system_choice": "Baseline",
+      "upgrade_dhw_to_hpwh": "Baseline"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-20",
-      "upgrade_roof_insulation.r_value_option": "R-30",
-      "adjust_infiltration_rates.infiltration_option": "0.75",
-      "upgrade_window_construction.glazing_choice": "double_clear_lowE (U-0.32, SHGC-0.40)",
-      "upgrade_hvac_system_choice.hvac_choice": "Baseline",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-20",
+      "upgrade_roof_insulation": "R-30",
+      "adjust_infiltration_rates": "0.75",
+      "upgrade_window_construction": "double_clear_lowE (U-0.32, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Baseline",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-7.5",
-      "upgrade_roof_insulation.r_value_option": "R-15",
-      "adjust_infiltration_rates.infiltration_option": "1.00",
-      "upgrade_window_construction.glazing_choice": "baseline (U-0.59, SHGC-0.40)",
-      "upgrade_hvac_system_choice.hvac_choice": "Condensing Boiler",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Upgrade"
+      "upgrade_wall_insulation": "R-7.5",
+      "upgrade_roof_insulation": "R-15",
+      "adjust_infiltration_rates": "1.00",
+      "upgrade_window_construction": "baseline (U-0.59, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Condensing Boiler",
+      "upgrade_dhw_to_hpwh": "Upgrade"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-10",
-      "upgrade_roof_insulation.r_value_option": "R-20",
-      "adjust_infiltration_rates.infiltration_option": "0.90",
-      "upgrade_window_construction.glazing_choice": "double_clear_lowE (U-0.32, SHGC-0.40)",
-      "upgrade_hvac_system_choice.hvac_choice": "Packaged HP",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-10",
+      "upgrade_roof_insulation": "R-20",
+      "adjust_infiltration_rates": "0.90",
+      "upgrade_window_construction": "double_clear_lowE (U-0.32, SHGC-0.40)",
+      "upgrade_hvac_system_choice": "Packaged HP",
+      "upgrade_dhw_to_hpwh": "Baseline"
     },
     {
-      "upgrade_wall_insulation.r_value_option": "R-15",
-      "upgrade_roof_insulation.r_value_option": "R-30",
-      "adjust_infiltration_rates.infiltration_option": "0.80",
-      "upgrade_window_construction.glazing_choice": "double_tinted_lowE (U-0.30, SHGC-0.30)",
-      "upgrade_hvac_system_choice.hvac_choice": "Mini-Split",
-      "upgrade_dhw_to_hpwh.dhw_hpwh_option": "Baseline"
+      "upgrade_wall_insulation": "R-15",
+      "upgrade_roof_insulation": "R-30",
+      "adjust_infiltration_rates": "0.80",
+      "upgrade_window_construction": "double_tinted_lowE (U-0.30, SHGC-0.30)",
+      "upgrade_hvac_system_choice": "Mini-Split",
+      "upgrade_dhw_to_hpwh": "Baseline"
     }
 ]

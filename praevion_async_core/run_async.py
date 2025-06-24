@@ -60,6 +60,7 @@ def main():
             evaluator=evaluator,
             random_state=42,
             initial_points=seed_configs,
+            n_initial_points=76,  # Sobol requires number of samples to be a power of 2
             **CONFIG
         )
 
@@ -68,7 +69,7 @@ def main():
             search.save_results = False
 
         # 🔍 Start the search
-        MAX_EVALS = 300
+        MAX_EVALS = 600
         print(f"🔍 Starting search with max_evals = {MAX_EVALS}")
         search.search(max_evals=MAX_EVALS)
 

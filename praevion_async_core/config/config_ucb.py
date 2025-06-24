@@ -1,12 +1,11 @@
 UCB_CONFIG = {
     "initial_point_generator": "sobol",     # Quasi-random for good initial spread across space
-    "n_initial_points": 32,                 # Sobol requires number of samples to be a power of 2
     "acq_func": "UCB",                      # Use UCB with decaying exploration for better convergence
     "acq_func_kwargs": {
-        "kappa": 2.5,                       # Start with strong exploration
+        "kappa": 3.0,                       # Start with strong exploration
         "scheduler": {                      # Add scheduler to taper exploration
             "type": "periodic-exp-decay",
-            "period": 35,                   # Every 30 evaluations, apply decay
+            "period": 50,                   # Every 50 evaluations, apply decay
             "kappa_final": 1.25             # Don't decay all the way to greediness (0.25 is too aggressive)
         }
     },

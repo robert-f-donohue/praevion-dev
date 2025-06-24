@@ -1,51 +1,122 @@
 calls:
-- max_evals: 200
+- max_evals: 600
   timeout: null
 search:
   acq_func: UCB
   acq_func_kwargs:
-    kappa: 2.5
+    kappa: 3.0
     scheduler:
       kappa_final: 1.25
-      period: 30
+      period: 50
       type: periodic-exp-decay
   acq_optimizer: mixedga
   acq_optimizer_kwargs:
     filter_duplicated: true
     filter_failures: ignore
     max_failures: 200
-    n_jobs: 6
+    n_jobs: 10
     n_points: 500
   checkpoint_history_to_csv: true
   evaluator:
     num_workers: 10
     type: ProcessPoolEvaluator
   initial_point_generator: sobol
-  initial_points: null
+  initial_points:
+  - adjust_infiltration_rates: '1.00'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Baseline
+    upgrade_roof_insulation: R-15
+    upgrade_wall_insulation: R-7.5
+    upgrade_window_construction: baseline (U-0.59, SHGC-0.40)
+  - adjust_infiltration_rates: '0.70'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Mini-Split
+    upgrade_roof_insulation: R-40
+    upgrade_wall_insulation: R-25
+    upgrade_window_construction: triple_lowE (U-0.20, SHGC-0.25)
+  - adjust_infiltration_rates: '0.75'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Mini-Split
+    upgrade_roof_insulation: R-20
+    upgrade_wall_insulation: R-10
+    upgrade_window_construction: double_clear_lowE (U-0.32, SHGC-0.40)
+  - adjust_infiltration_rates: '0.80'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Condensing Boiler
+    upgrade_roof_insulation: R-30
+    upgrade_wall_insulation: R-15
+    upgrade_window_construction: double_tinted_lowE (U-0.30, SHGC-0.30)
+  - adjust_infiltration_rates: '0.70'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Packaged HP
+    upgrade_roof_insulation: R-30
+    upgrade_wall_insulation: R-20
+    upgrade_window_construction: triple_lowE (U-0.20, SHGC-0.25)
+  - adjust_infiltration_rates: '0.90'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Mini-Split
+    upgrade_roof_insulation: R-15
+    upgrade_wall_insulation: R-7.5
+    upgrade_window_construction: baseline (U-0.59, SHGC-0.40)
+  - adjust_infiltration_rates: '1.00'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Baseline
+    upgrade_roof_insulation: R-15
+    upgrade_wall_insulation: R-7.5
+    upgrade_window_construction: double_tinted_lowE (U-0.30, SHGC-0.30)
+  - adjust_infiltration_rates: '0.70'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Baseline
+    upgrade_roof_insulation: R-40
+    upgrade_wall_insulation: R-25
+    upgrade_window_construction: triple_lowE (U-0.20, SHGC-0.25)
+  - adjust_infiltration_rates: '0.75'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Baseline
+    upgrade_roof_insulation: R-30
+    upgrade_wall_insulation: R-20
+    upgrade_window_construction: double_clear_lowE (U-0.32, SHGC-0.40)
+  - adjust_infiltration_rates: '1.00'
+    upgrade_dhw_to_hpwh: Upgrade
+    upgrade_hvac_system_choice: Condensing Boiler
+    upgrade_roof_insulation: R-15
+    upgrade_wall_insulation: R-7.5
+    upgrade_window_construction: baseline (U-0.59, SHGC-0.40)
+  - adjust_infiltration_rates: '0.90'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Packaged HP
+    upgrade_roof_insulation: R-20
+    upgrade_wall_insulation: R-10
+    upgrade_window_construction: double_clear_lowE (U-0.32, SHGC-0.40)
+  - adjust_infiltration_rates: '0.80'
+    upgrade_dhw_to_hpwh: Baseline
+    upgrade_hvac_system_choice: Mini-Split
+    upgrade_roof_insulation: R-30
+    upgrade_wall_insulation: R-15
+    upgrade_window_construction: double_tinted_lowE (U-0.30, SHGC-0.30)
   log_dir: .
   moo_lower_bounds: null
   moo_scalarization_strategy: AugChebyshev
   moo_scalarization_weight: null
   multi_point_strategy: qUCBd
-  n_initial_points: 32
+  n_initial_points: 76
   objective_scaler: minmax
-  problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "add_in_unit_erv",
-    "choices": ["No ERV", "Add ERV"], "weights": null, "default_value": "No ERV",
-    "meta": null}, {"type": "categorical", "name": "adjust_infiltration_rates", "choices":
-    ["1.00", "0.90", "0.80", "0.70", "0.65", "0.60"], "weights": null, "default_value":
+  problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "adjust_infiltration_rates",
+    "choices": ["1.00", "0.90", "0.80", "0.75", "0.70"], "weights": null, "default_value":
     "1.00", "meta": null}, {"type": "categorical", "name": "upgrade_dhw_to_hpwh",
     "choices": ["Baseline", "Upgrade"], "weights": null, "default_value": "Baseline",
     "meta": null}, {"type": "categorical", "name": "upgrade_hvac_system_choice", "choices":
-    ["Baseline", "Mini-Split", "Packaged HP"], "weights": null, "default_value": "Baseline",
-    "meta": null}, {"type": "categorical", "name": "upgrade_roof_insulation", "choices":
-    ["R-15", "R-20", "R-30", "R-40"], "weights": null, "default_value": "R-15", "meta":
-    null}, {"type": "categorical", "name": "upgrade_wall_insulation", "choices": ["R-7.5",
-    "R-10", "R-15", "R-20", "R-25"], "weights": null, "default_value": "R-7.5", "meta":
-    null}, {"type": "categorical", "name": "upgrade_window_construction", "choices":
-    ["baseline (U-0.59, SHGC-0.40)", "double_clear_lowE (U-0.32, SHGC-0.40)", "double_tinted_lowE
-    (U-0.30, SHGC-0.30)", "triple_lowE (U-0.20, SHGC-0.25)"], "weights": null, "default_value":
-    "baseline (U-0.59, SHGC-0.40)", "meta": null}], "conditions": [], "forbiddens":
-    [], "python_module_version": "1.2.0", "format_version": 0.4}'
+    ["Baseline", "Condensing Boiler", "Mini-Split", "Packaged HP"], "weights": null,
+    "default_value": "Baseline", "meta": null}, {"type": "categorical", "name": "upgrade_roof_insulation",
+    "choices": ["R-15", "R-20", "R-30", "R-40"], "weights": null, "default_value":
+    "R-15", "meta": null}, {"type": "categorical", "name": "upgrade_wall_insulation",
+    "choices": ["R-7.5", "R-10", "R-15", "R-20", "R-25"], "weights": null, "default_value":
+    "R-7.5", "meta": null}, {"type": "categorical", "name": "upgrade_window_construction",
+    "choices": ["baseline (U-0.59, SHGC-0.40)", "double_clear_lowE (U-0.32, SHGC-0.40)",
+    "double_tinted_lowE (U-0.30, SHGC-0.30)", "triple_lowE (U-0.20, SHGC-0.25)"],
+    "weights": null, "default_value": "baseline (U-0.59, SHGC-0.40)", "meta": null}],
+    "conditions": [], "forbiddens": [], "python_module_version": "1.2.0", "format_version":
+    0.4}'
   random_state: 42
   solution_selection: argmax_obs
   stopper: null

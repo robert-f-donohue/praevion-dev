@@ -54,6 +54,7 @@ class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
                 runner.registerFinalCondition("Updated #{boilers.size} boiler(s) to 92% efficiency.")
                 return true
             end
+        end
 
 
 
@@ -321,8 +322,6 @@ class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
         end
 
         runner.registerFinalCondition("Installed #{hvac_option} systems in #{zones_modified} zones.")
-
-
 
         # set the simulation control to run sizing calculations
         sim_control = model.getSimulationControl
