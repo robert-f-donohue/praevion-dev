@@ -1,5 +1,5 @@
 calls:
-- max_evals: 600
+- max_evals: 150
   timeout: null
 search:
   acq_func: UCB
@@ -7,7 +7,7 @@ search:
     kappa: 3.0
     scheduler:
       kappa_final: 1.25
-      period: 50
+      period: 30
       type: periodic-exp-decay
   acq_optimizer: mixedga
   acq_optimizer_kwargs:
@@ -99,8 +99,8 @@ search:
   moo_scalarization_strategy: AugChebyshev
   moo_scalarization_weight: null
   multi_point_strategy: qUCBd
-  n_initial_points: 76
-  objective_scaler: minmax
+  n_initial_points: 16
+  objective_scaler: auto
   problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "adjust_infiltration_rates",
     "choices": ["1.00", "0.90", "0.80", "0.75", "0.70"], "weights": null, "default_value":
     "1.00", "meta": null}, {"type": "categorical", "name": "upgrade_dhw_to_hpwh",

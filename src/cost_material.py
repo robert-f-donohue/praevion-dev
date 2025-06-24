@@ -63,10 +63,10 @@ def calculate_material_cost_from_df(selections, surface_areas, total_floor_area,
 
         # Handle all rows (in case more than one entry exists for same measure/option)
         for _, row in matched_rows.iterrows():
-            gwp = row["Cost ($/unit)"]
+            unit_cost = row["Cost ($/unit)"]
             unit_type = row["unit_mapping"]
 
-            # Decide how to normalize the GWP value
+            # Decide how to normalize the unit_cost value
             if unit_type == "wall_area":
                 quantity = surface_areas.get("wall_area_m2", 0)
             elif unit_type == "roof_area":
@@ -86,10 +86,10 @@ def calculate_material_cost_from_df(selections, surface_areas, total_floor_area,
             # If insulation, apply thickness scaling (e.g., 1.2 kg CO2e per inch x 6 inches
             thickness = row.get("insulation_thickness", 1)
             if pd.notna(thickness):
-                gwp *= thickness
+                unit_cost *= thickness
 
             # Calculate subtotal embodied carbon for this line item
-            subtotal = gwp * quantity
+            subtotal = unit_cost * quantity
 
             # Categorize the subtotal based on the type of measure
             if 'wall' in measure:

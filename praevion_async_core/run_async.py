@@ -8,7 +8,7 @@ from deephyper.hpo import CBO
 from praevion_async_core.paths import RESULTS_ARCHIVE
 from praevion_async_core.problem import problem
 # from praevion_async_core.utils.constraint_aware_cbo import ConstraintAwareCBO
-from praevion_async_core.utils.run_function_async import run_function, best_log
+from praevion_async_core.utils.run_function_async import run_function, run_function_deduplicated, best_log
 from praevion_async_core.utils.logging_utils import (
     clean_batch_folders,
     save_results_csv,
@@ -51,7 +51,7 @@ def main():
 
     # ⚙️ Launch DeepHyper evaluation context
     num_cpu_workers = 10
-    with Evaluator.create(run_function=run_function, method="process",
+    with Evaluator.create(run_function=run_function_deduplicated, method="process",
                           method_kwargs={"num_workers": num_cpu_workers}) as evaluator:
 
         # 🧠 Instantiate search strategy (CBO)
@@ -59,10 +59,12 @@ def main():
             problem=problem,
             evaluator=evaluator,
             random_state=42,
-            initial_points=seed_configs,
-            n_initial_points=76,  # Sobol requires number of samples to be a power of 2
+            initial_points = seed_configs,
+            n_initial_points=64,  # Sobol requires number of samples to be a power of 2
             **CONFIG
         )
+
+
 
         # Prevent DeepHyper from auto-saving results
         if hasattr(search, "save_results"):
