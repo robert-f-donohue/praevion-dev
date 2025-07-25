@@ -19,9 +19,9 @@ class AdjustInfiltrationRates < OpenStudio::Measure::ModelMeasure
         choices = OpenStudio::StringVector.new
         choices << '1.00'
         choices << '0.90'
-        choices << '0.80'
         choices << '0.75'
-        choices << '0.70'
+        choices << '0.60'
+        choices << '0.40'
 
         # set your selection default to None
         infiltration_option  = OpenStudio::Measure::OSArgument.makeChoiceArgument('infiltration_option', choices, true)

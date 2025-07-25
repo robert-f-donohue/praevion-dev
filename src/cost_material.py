@@ -55,7 +55,7 @@ def calculate_material_cost_from_df(selections, surface_areas, total_floor_area,
 
         if matched_rows.empty:
             if normalize_val(selected_value) in {
-                "baseline", "r-7.5", "r-15", "1.00", "no erv", "baseline (u-0.59, shgc-0.40)", "condensing boiler"
+                "baseline", "r-7.5", "r-15", "1.00", "condensing boiler"
             }:
                 continue  # Silently skip baseline
             print(f"[WARNING] No cost match found for: measure_id='{measure}', option_id='{selected_value}'")

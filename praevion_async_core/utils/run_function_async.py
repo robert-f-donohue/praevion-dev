@@ -6,7 +6,6 @@ import numpy as np
 from datetime import datetime, timezone
 from deephyper.evaluator import RunningJob
 
-# from praevion_async_core.utils.search_utils import is_valid_config
 from src.evaluate_kpis import evaluate_kpis_from_config
 from praevion_async_core.paths import LOG_DIR, INPUT_DIR
 
@@ -50,20 +49,6 @@ def run_function(config: dict):
 
     print(f"🔁 Starting config {run_id}")
 
-    # if not is_valid_config(config):
-    #     error_msg = "Invalid configuration (violates constraints)."
-    #     print(f"❌ Failed config {run_id}: {error_msg}")
-    #     log_entry = {
-    #         "timestamp": timestamp,
-    #         "run_id": run_id,
-    #         "config": config,
-    #         "success": False,
-    #         "error": error_msg
-    #     }
-    #     with open(kpi_log_path, "a") as f:
-    #         f.write(json.dumps(log_entry) + "\n")
-    #     return {"objective": [sys.float_info.max] * 2, "metadata": log_entry}
-
     try:
 
         # Evaluate KPIs based on currently evaluated ECM configuration
@@ -82,31 +67,29 @@ def run_function(config: dict):
         berdo_fine_usd = kpis["berdo_fine_usd"]
         material_cost_usd = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
         utility_cost_usd = kpis["discounted_utility_cost_usd"] if kpis["discounted_utility_cost_usd"] > 0 else 1.0
+        longrun_cost_usd = material_cost_usd + utility_cost_usd
 
         # Theoretical maximums for normalization
         max_oc = 5_552_000
         max_ec = 464_000
-        max_fine = 487_000
         max_mat_cost = 1_167_000
+        max_longrun_cost = 1_500_000
 
         # Theoretical minimums for operational carbon emissions
         min_oc = 1_508_000
 
         # Normalize objective values
-        OC_normalized = (operational_carbon_kg - min_oc) / (max_oc - min_oc)
-        EC_normalized = embodied_carbon_kg / max_ec
-        Fine_normalized = berdo_fine_usd / max_fine
-        Material_normalized = material_cost_usd / max_mat_cost
-
-        # Scale BERDO fines to a log scale to allow for more nuance in moderate options
-        fine_log_scaled = np.log(berdo_fine_usd + 100) / np.log(max_fine + 100)
+        oc_normalized = (operational_carbon_kg - min_oc) / (max_oc - min_oc)
+        ec_normalized = embodied_carbon_kg / max_ec
+        longrun_normalized = longrun_cost_usd / max_longrun_cost
+        material_normalized = material_cost_usd / max_mat_cost
 
         # Gather the objective values to be fed in the MOO engine
         objective_values = [
-            -OC_normalized,
-            -EC_normalized,
-            -fine_log_scaled,
-            -Material_normalized
+            -oc_normalized,
+            -ec_normalized,
+            -longrun_normalized,
+            -material_normalized
         ]
 
         # Structure successful kpi_log entry
@@ -119,6 +102,7 @@ def run_function(config: dict):
                 "operational_carbon_kg": operational_carbon_kg,
                 "embodied_carbon_kg": embodied_carbon_kg,
                 "berdo_fine_usd": berdo_fine_usd,
+                "longrun_cost_usd": longrun_cost_usd,
                 "material_cost_usd": material_cost_usd,
                 "normalized_objective_values": objective_values
             }
@@ -130,7 +114,7 @@ def run_function(config: dict):
             "run_id": run_id,
             "oc_total": objective_values[0],
             "ec_total": objective_values[1],
-            "fine_total": objective_values[2],
+            "longrun_cost_total": objective_values[2],
             "mat_cost_total": objective_values[3],
         })
         with open(kpi_log_path, "a") as f:

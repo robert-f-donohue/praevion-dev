@@ -44,11 +44,6 @@ def main():
     # 🧼 Clean up working directories to prepare for this run
     clean_batch_folders(project_root=".")
 
-    # Add seed config files
-    seed_path = os.path.join(INPUT_DIR, "seed_configs", "seed_configs.json")
-    with open(seed_path, 'r') as f:
-        seed_configs = json.load(f)
-
     # ⚙️ Launch DeepHyper evaluation context
     num_cpu_workers = 10
     with Evaluator.create(run_function=run_function_deduplicated, method="process",
@@ -60,7 +55,6 @@ def main():
             evaluator=evaluator,
             random_state=42,
             n_initial_points=76,  # Sobol requires number of samples to be a power of 2
-            initial_points=seed_configs,
             **CONFIG
         )
 

@@ -1,0 +1,33 @@
+{
+  "upgrade_wall_insulation": {
+    "measure_dir": "2-measures/insulation/upgrade_wall_insulation",
+    "argument_key": "r_value_option",
+    "options": ["R-7.5", "R-10", "R-15", "R-20", "R-25"]
+  },
+  "upgrade_roof_insulation": {
+    "measure_dir": "2-measures/insulation/upgrade_roof_insulation",
+    "argument_key": "r_value_option",
+    "options": ["R-15", "R-20", "R-30", "R-40"]
+  },
+  "upgrade_window_construction": {
+    "measure_dir": "2-measures/windows/upgrade_window_construction",
+    "argument_key": "glazing_choice",
+    "options": ["baseline (U-0.59, SHGC-0.40)", "double_clear_lowE (U-0.32, SHGC-0.40)",
+                "double_tinted_lowE (U-0.30, SHGC-0.30)", "triple_lowE (U-0.20, SHGC-0.25)"]
+  },
+  "adjust_infiltration_rates": {
+    "measure_dir": "2-measures/air-sealing/adjust_infiltration_rates",
+    "argument_key": "infiltration_option",
+    "options": ["1.00","0.90", "0.75", "0.60","0.40"]
+  },
+  "upgrade_hvac_system_choice": {
+    "measure_dir": "2-measures/hvac/upgrade_hvac_system_choice",
+    "argument_key": "hvac_option",
+    "options": ["Baseline", "Condensing Boiler","Mini-Split", "Packaged HP"]
+  },
+  "upgrade_dhw_to_hpwh": {
+    "measure_dir": "2-measures/dhw/upgrade_dhw_to_hpwh",
+    "argument_key": "dhw_hpwh_option",
+    "options": ["Baseline", "Upgrade"]
+  }
+}

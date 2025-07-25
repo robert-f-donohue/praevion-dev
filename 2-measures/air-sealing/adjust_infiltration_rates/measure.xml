@@ -28,16 +28,16 @@
           <display_name>0.90</display_name>
         </choice>
         <choice>
-          <value>0.80</value>
-          <display_name>0.80</display_name>
-        </choice>
-        <choice>
           <value>0.75</value>
           <display_name>0.75</display_name>
         </choice>
         <choice>
-          <value>0.70</value>
-          <display_name>0.70</display_name>
+          <value>0.60</value>
+          <display_name>0.60</display_name>
+        </choice>
+        <choice>
+          <value>0.40</value>
+          <display_name>0.40</display_name>
         </choice>
       </choices>
     </argument>

@@ -139,7 +139,7 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df
 
     # Setup input file paths
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    ecm_options_path = os.path.join(project_root, "3-ecm_definitions", "ecm_options.json")
+    ecm_options_path = os.path.join(project_root, "3-ecm_definitions", "ecm_options_complex.json")
     seed_file = os.path.join(project_root, "1-openstudio-models", "cluster4-existing-condition.osm")
     weather_file = os.path.join(project_root, "1-openstudio-models", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3.epw")
 
