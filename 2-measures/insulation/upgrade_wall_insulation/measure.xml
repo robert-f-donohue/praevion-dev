@@ -3,8 +3,8 @@
   <schema_version>3.1</schema_version>
   <name>upgrade_wall_insulation</name>
   <uid>1c126f41-c64b-49da-b7d5-a9d761fcabd9</uid>
-  <version_id>3ccf27d0-42c6-4b5c-9fa1-8d8315c6b814</version_id>
-  <version_modified>2025-06-15T20:43:28Z</version_modified>
+  <version_id>821fc178-5c4e-48ef-8738-e96a164b5b6e</version_id>
+  <version_modified>2025-06-22T18:37:10Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>UpgradeWallInsulation</class_name>
   <display_name>Upgrade Wall Insulation</display_name>
@@ -17,11 +17,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>R-7.5</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>R-7.5</value>
+          <display_name>R-7.5</display_name>
         </choice>
         <choice>
           <value>R-10</value>
@@ -97,7 +97,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>9256BF92</checksum>
+      <checksum>C3D9FC44</checksum>
     </file>
   </files>
 </measure>

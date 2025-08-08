@@ -3,8 +3,8 @@
   <schema_version>3.1</schema_version>
   <name>upgrade_dhw_to_hpwh</name>
   <uid>dd02dbef-c65e-4185-a7e4-f06a693b5b14</uid>
-  <version_id>fca8feea-ea69-4c3d-8edb-334e4b0185cd</version_id>
-  <version_modified>2025-06-16T18:19:53Z</version_modified>
+  <version_id>6a484693-1415-4438-bbe0-250dc5f789b7</version_id>
+  <version_modified>2025-06-22T18:32:54Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>UpgradeDHWToHPWH</class_name>
   <display_name>Upgrade DHW to HPWH</display_name>
@@ -17,11 +17,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>Baseline</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>Baseline</value>
+          <display_name>Baseline</display_name>
         </choice>
         <choice>
           <value>Upgrade</value>
@@ -85,7 +85,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>B054B38A</checksum>
+      <checksum>1A6FE4DB</checksum>
     </file>
   </files>
 </measure>

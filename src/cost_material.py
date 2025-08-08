@@ -1,8 +1,8 @@
 import pandas as pd
 
-def calculate_embodied_carbon_from_df(selections, surface_areas, total_floor_area, apartment_floor_area, apartment_count, df_ec):
+def calculate_material_cost_from_df(selections, surface_areas, total_floor_area, apartment_floor_area, apartment_count, df_material):
     """
-    Calculates total embodied carbon (kg CO2e) using ECM selection data, surface areas,
+    Calculates total material cost (USD) using ECM selection data, surface areas,
     apartment count, and a DataFrame of embodied carbon intensities by measure.
 
     Parameters:
@@ -11,7 +11,7 @@ def calculate_embodied_carbon_from_df(selections, surface_areas, total_floor_are
         total_floor_area (int): total floor area of all residential and non-residential areas
         apartment_floor_area (int): total floor area of apartment units
         apartment_count (int): number of apartments in the model
-        df_ec (pd.DataFrame): loaded EC data with measure_name, argument_value, GWP, etc.
+        df_material (pd.DataFrame): loaded material cost data with measure_name, argument_value, $/unit, etc.
 
     Returns:
         dict: kg CO2e by component and total
@@ -19,14 +19,14 @@ def calculate_embodied_carbon_from_df(selections, surface_areas, total_floor_are
 
     # Initialize embodied carbon result dictionary
     result = {
-        "wall_ec_kg": 0.0,
-        "roof_ec_kg": 0.0,
-        "window_ec_kg": 0.0,
-        "hvac_ec_kg": 0.0,
-        "erv_ec_kg": 0.0,
-        "dhw_ec_kg": 0.0,
-        "other_ec_kg": 0.0,
-        "total_ec_kg": 0.0
+        "wall_mat_cost": 0.0,
+        "roof_mat_cost": 0.0,
+        "window_mat_cost": 0.0,
+        "hvac_mat_cost": 0.0,
+        "erv_mat_cost": 0.0,
+        "dhw_mat_cost": 0.0,
+        "other_mat_cost": 0.0,
+        "total_mat_cost": 0.0
     }
 
     # Measures with no EC impact
@@ -48,25 +48,25 @@ def calculate_embodied_carbon_from_df(selections, surface_areas, total_floor_are
             except (ValueError, TypeError):
                 return str(val).strip().lower()
 
-        matched_rows = df_ec[
-            (df_ec["measure_name"].str.strip().str.lower() == measure.strip().lower()) &
-            (df_ec["argument_value"].apply(normalize_val) == normalize_val(selected_value))
+        matched_rows = df_material[
+            (df_material["measure_name"].str.strip().str.lower() == measure.strip().lower()) &
+            (df_material["argument_value"].apply(normalize_val) == normalize_val(selected_value))
         ]
 
         if matched_rows.empty:
             if normalize_val(selected_value) in {
-                "baseline", "r-7.5", "r-15", "1.00", "no erv", "baseline (u-0.59, shgc-0.40)", "condensing boiler"
+                "baseline", "r-7.5", "r-15", "1.00", "condensing boiler"
             }:
                 continue  # Silently skip baseline
-            print(f"[WARNING] No EC match found for: measure_id='{measure}', option_id='{selected_value}'")
+            print(f"[WARNING] No cost match found for: measure_id='{measure}', option_id='{selected_value}'")
             continue
 
         # Handle all rows (in case more than one entry exists for same measure/option)
         for _, row in matched_rows.iterrows():
-            gwp = row["GWP (kg per unit)"]
+            unit_cost = row["Cost ($/unit)"]
             unit_type = row["unit_mapping"]
 
-            # Decide how to normalize the GWP value
+            # Decide how to normalize the unit_cost value
             if unit_type == "wall_area":
                 quantity = surface_areas.get("wall_area_m2", 0)
             elif unit_type == "roof_area":
@@ -86,36 +86,36 @@ def calculate_embodied_carbon_from_df(selections, surface_areas, total_floor_are
             # If insulation, apply thickness scaling (e.g., 1.2 kg CO2e per inch x 6 inches
             thickness = row.get("insulation_thickness", 1)
             if pd.notna(thickness):
-                gwp *= thickness
+                unit_cost *= thickness
 
             # Calculate subtotal embodied carbon for this line item
-            subtotal = gwp * quantity
+            subtotal = unit_cost * quantity
 
             # Categorize the subtotal based on the type of measure
             if 'wall' in measure:
-                result['wall_ec_kg'] += subtotal
+                result['wall_mat_cost'] += subtotal
             elif 'roof' in measure:
-                result['roof_ec_kg'] += subtotal
+                result['roof_mat_cost'] += subtotal
             elif 'window' in measure:
-                result['window_ec_kg'] += subtotal
+                result['window_mat_cost'] += subtotal
             elif 'hvac' in measure:
-                result['hvac_ec_kg'] += subtotal
+                result['hvac_mat_cost'] += subtotal
             elif 'erv' in measure:
-                result['erv_ec_kg'] += subtotal
+                result['erv_mat_cost'] += subtotal
             elif 'dhw' in measure:
-                result['dhw_ec_kg'] += subtotal
+                result['dhw_mat_cost'] += subtotal
             else:
-                result['other_ec_kg'] += subtotal
+                result['other_mat_cost'] += subtotal
 
     # Sum all categories into the total
-    result["total_ec_kg"] = sum([
-        result["wall_ec_kg"],
-        result["roof_ec_kg"],
-        result["window_ec_kg"],
-        result["erv_ec_kg"],
-        result["hvac_ec_kg"],
-        result["dhw_ec_kg"],
-        result["other_ec_kg"]
+    result["material_cost_usd"] = sum([
+        result["wall_mat_cost"],
+        result["roof_mat_cost"],
+        result["window_mat_cost"],
+        result["erv_mat_cost"],
+        result["hvac_mat_cost"],
+        result["dhw_mat_cost"],
+        result["other_mat_cost"]
     ])
 
     return result

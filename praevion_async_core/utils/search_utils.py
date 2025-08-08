@@ -1,12 +1,12 @@
-def is_valid_config(config):
+def is_valid_config(config: dict) -> bool:
     """
     Check if a given ECM configuration satisfies domain-specific constraints.
 
     Rules enforced:
     1. If either window U-value or SHGC is specified, both must be.
     2. Infiltration reduction options require corresponding envelope upgrades:
-       - 0.80 requires wall R-10 or greater
-       - 0.60 requires wall R-15 or greater
+       - 0.75 requires wall R-10 or greater
+       - 0.60 requires wall R-15 or greater and window upgrades
        - 0.40 requires wall R-20 or greater and window upgrades
 
     Parameters:
@@ -32,12 +32,14 @@ def is_valid_config(config):
 
     wall_r = r_value_num(wall)
 
-    if infiltration == "0.80" and wall_r < 10:
-        return False
-    if infiltration == "0.60" and wall_r < 15:
-        return False
+    if infiltration == "0.75":
+        if wall_r < 10:
+            return False
+    if infiltration == "0.60":
+        if wall_r < 15 or u_value == "None" or shgc == "None":
+            return False
     if infiltration == "0.40":
-        if wall_r < 20 or u_value == "None":
+        if wall_r < 20 or u_value == "None" or shgc == "None":
             return False
 
     return True

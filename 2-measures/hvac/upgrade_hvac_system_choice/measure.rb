@@ -2,8 +2,8 @@
 # UpgradeHVACSystemChoice
 #
 # Author:  Robert Donohue, enviENERGY Studio LLC
-# Version: 0.1.0
-# Date:    2025-06-21
+# Version: 0.2.0
+# Date:    2025-06-22
 # -----------------------------------------------------------------------------------------------
 
 class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
@@ -17,14 +17,15 @@ class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for whether or not to add a packaged heat pump to the zone
         choices = OpenStudio::StringVector.new
-        choices << 'None'
-        choices << 'Mini-Split'  # Mini-Split Ductless Heat Pump
-        choices << 'Packaged HP' # Packaged Terminal Heat Pump
+        choices << 'Baseline'          # Baseline - radiant heating, window AC
+        choices << 'Condensing Boiler' # Condensing Boiler with Radiant Heating
+        choices << 'Mini-Split'        # Mini-Split Ductless Heat Pump
+        choices << 'Packaged HP'       # Packaged Terminal Heat Pump
 
         # set your selection default to None
         hvac_option = OpenStudio::Measure::OSArgument.makeChoiceArgument('hvac_option', choices, true)
         hvac_option.setDisplayName('Select HVAC System Option')
-        hvac_option.setDefaultValue('None')
+        hvac_option.setDefaultValue('Baseline')
         args << hvac_option 
 
         # return argument vector
@@ -36,7 +37,26 @@ class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
         return false unless runner.validateUserArguments(arguments(model), user_arguments)
 
         hvac_option  = runner.getStringArgumentValue('hvac_option', user_arguments)
-        return runner.registerInfo('No HVAC system selected.') && true if hvac_option == 'None'
+        return runner.registerInfo('No updated HVAC system selected.') && true if hvac_option == 'Baseline'
+
+        # Update the boiler efficiency if Condensing Boiler is selected
+        if hvac_option == 'Condensing Boiler'
+            boilers = model.getBoilerHotWaters
+
+            if boilers.empty?
+                runner.registerInfo('No BoilerHotWater objects found in the model.')
+                return false
+            else
+                boilers.each do |boiler|
+                    boiler.setNominalThermalEfficiency(0.92)
+                    runner.registerInfo("Updated boiler '#{boiler.name}' efficiency to 0.92.")
+                end
+                runner.registerFinalCondition("Updated #{boilers.size} boiler(s) to 92% efficiency.")
+                return true
+            end
+        end
+
+
 
         # Choose performance curves based on the selected option
         case hvac_option
@@ -249,6 +269,56 @@ class UpgradeHVACSystemChoice < OpenStudio::Measure::ModelMeasure
 
             # increment the zone counter
             zones_modified += 1
+        end
+
+        if ['Mini-Split', 'Packaged HP'].include?(hvac_option)
+            # set an always-on schedule for the ERV
+            always_on = model.alwaysOnDiscreteSchedule
+
+            # airflow in m³/s (75 CFM)
+            erv_flow = OpenStudio.convert(75, 'cfm', 'm^3/s').get
+
+            # ERV fan configuration
+            fan_efficiency = 0.5
+            target_power_watts = 75 * 0.5   # 0.5 W/CFM per fan
+            pressure_rise = target_power_watts * fan_efficiency / erv_flow  # ~535.7 Pa
+
+            # add ERV to each apartment zone
+            model.getThermalZones.each do |zone|
+                next unless zone.name.get.downcase.include?('apartment')
+                next if zone.equipment.any? { |eq| eq.to_ZoneHVACEnergyRecoveryVentilator.is_initialized }
+
+                # supply fan
+                supply_fan = OpenStudio::Model::FanConstantVolume.new(model)
+                supply_fan.setName("ERV Supply Fan - #{zone.nameString}")
+                supply_fan.setFanEfficiency(fan_efficiency)
+                supply_fan.setPressureRise(pressure_rise)
+                supply_fan.setAvailabilitySchedule(always_on)
+
+                # exhaust fan
+                exhaust_fan = OpenStudio::Model::FanConstantVolume.new(model)
+                exhaust_fan.setName("ERV Exhaust Fan - #{zone.nameString}")
+                exhaust_fan.setFanEfficiency(fan_efficiency)
+                exhaust_fan.setPressureRise(pressure_rise)
+                exhaust_fan.setAvailabilitySchedule(always_on)
+
+                # heat exchanger
+                hx = OpenStudio::Model::HeatExchangerAirToAirSensibleAndLatent.new(model)
+                hx.setSensibleEffectivenessat100HeatingAirFlow(0.75)
+                hx.setSensibleEffectivenessat100CoolingAirFlow(0.75)
+                hx.setLatentEffectivenessat100HeatingAirFlow(0.50)
+                hx.setLatentEffectivenessat100CoolingAirFlow(0.50)
+
+                # ERV unit
+                erv = OpenStudio::Model::ZoneHVACEnergyRecoveryVentilator.new(model)
+                erv.setName("ERV - #{zone.nameString}")
+                erv.setAvailabilitySchedule(always_on)
+                erv.setSupplyAirFlowRate(erv_flow)
+                erv.setExhaustAirFlowRate(erv_flow)
+                erv.setHeatExchanger(hx)
+                erv.addToThermalZone(zone)
+            end
+
         end
 
         runner.registerFinalCondition("Installed #{hvac_option} systems in #{zones_modified} zones.")

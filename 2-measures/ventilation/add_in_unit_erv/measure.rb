@@ -17,13 +17,13 @@ class AddInUnitERV < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for whether or not to add an ERV
         choices = OpenStudio::StringVector.new
-        choices << 'None'
+        choices << 'No ERV'  # default option
         choices << 'Add ERV'
 
         # set your selection default to None
         erv_option = OpenStudio::Measure::OSArgument.makeChoiceArgument('erv_option', choices, true)
         erv_option.setDisplayName('Select ERV Option')
-        erv_option.setDefaultValue('None')
+        erv_option.setDefaultValue('No ERV')
         args << erv_option 
 
         # return argument vector
@@ -45,7 +45,7 @@ class AddInUnitERV < OpenStudio::Measure::ModelMeasure
         end
 
         # return early if None is selected
-        if erv_option == 'None'
+        if erv_option == 'No ERV'
             runner.registerInfo('No ERVs added.')
             return true
         end

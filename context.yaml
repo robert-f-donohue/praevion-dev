@@ -1,55 +1,76 @@
 calls:
-- max_evals: 2
+- max_evals: 640
   timeout: null
 search:
-  acq_func: UCB
+  acq_func: UCBd
   acq_func_kwargs:
-    kappa: 2.5
+    kappa: 3.0
     scheduler:
-      kappa_final: 1.0
-      period: 80
+      kappa_final: 0.25
+      period: 40
       type: periodic-exp-decay
+    xi: 0.1
   acq_optimizer: mixedga
   acq_optimizer_kwargs:
+    acq_optimizer_freq: 5
     filter_duplicated: true
     filter_failures: ignore
     max_failures: 200
-    n_jobs: 6
-    n_points: 300
+    n_jobs: 10
+    n_points: 80
   checkpoint_history_to_csv: true
   evaluator:
-    num_workers: 2
+    num_workers: 10
     type: ProcessPoolEvaluator
   initial_point_generator: sobol
   initial_points: null
   log_dir: .
   moo_lower_bounds: null
-  moo_scalarization_strategy: Chebyshev
+  moo_scalarization_strategy: AugChebyshev
   moo_scalarization_weight: null
   multi_point_strategy: qUCBd
-  n_initial_points: null
-  objective_scaler: minmax
-  problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "add_in_unit_erv",
-    "choices": ["None", "Add ERV"], "weights": null, "default_value": "None", "meta":
-    null}, {"type": "categorical", "name": "adjust_infiltration_rates", "choices":
-    ["None", "0.80", "0.60", "0.40"], "weights": null, "default_value": "None", "meta":
-    null}, {"type": "categorical", "name": "upgrade_dhw_to_hpwh", "choices": ["None",
-    "Upgrade"], "weights": null, "default_value": "None", "meta": null}, {"type":
-    "categorical", "name": "upgrade_hvac_system_choice", "choices": ["None", "Mini-Split",
-    "Packaged HP"], "weights": null, "default_value": "None", "meta": null}, {"type":
-    "categorical", "name": "upgrade_roof_insulation", "choices": ["None", "R-20",
-    "R-30", "R-40"], "weights": null, "default_value": "None", "meta": null}, {"type":
-    "categorical", "name": "upgrade_wall_insulation", "choices": ["None", "R-10",
-    "R-15", "R-20", "R-25"], "weights": null, "default_value": "None", "meta": null},
-    {"type": "categorical", "name": "upgrade_window_shgc", "choices": ["None", "0.25",
-    "0.35", "0.40"], "weights": null, "default_value": "None", "meta": null}, {"type":
-    "categorical", "name": "upgrade_window_u_value", "choices": ["None", "0.32", "0.28",
-    "0.22", "0.18"], "weights": null, "default_value": "None", "meta": null}], "conditions":
-    [], "forbiddens": [], "python_module_version": "1.2.0", "format_version": 0.4}'
+  n_initial_points: 128
+  objective_scaler: auto
+  problem: '{"name": null, "hyperparameters": [{"type": "categorical", "name": "adjust_infiltration_rates",
+    "choices": ["1.00", "0.90", "0.75", "0.60", "0.40"], "weights": null, "default_value":
+    "1.00", "meta": null}, {"type": "categorical", "name": "upgrade_dhw_to_hpwh",
+    "choices": ["Baseline", "Upgrade"], "weights": null, "default_value": "Baseline",
+    "meta": null}, {"type": "categorical", "name": "upgrade_hvac_system_choice", "choices":
+    ["Baseline", "Condensing Boiler", "Mini-Split", "Packaged HP"], "weights": null,
+    "default_value": "Baseline", "meta": null}, {"type": "categorical", "name": "upgrade_roof_insulation",
+    "choices": ["R-15", "R-20", "R-30", "R-40"], "weights": null, "default_value":
+    "R-15", "meta": null}, {"type": "categorical", "name": "upgrade_wall_insulation",
+    "choices": ["R-7.5", "R-10", "R-15", "R-20", "R-25"], "weights": null, "default_value":
+    "R-7.5", "meta": null}, {"type": "categorical", "name": "upgrade_window_shgc",
+    "choices": ["None", "0.25", "0.35", "0.40"], "weights": null, "default_value":
+    "None", "meta": null}, {"type": "categorical", "name": "upgrade_window_u_value",
+    "choices": ["None", "0.32", "0.28", "0.22", "0.18"], "weights": null, "default_value":
+    "None", "meta": null}], "conditions": [], "forbiddens": [{"type": "AND", "clauses":
+    [{"type": "EQUALS", "name": "adjust_infiltration_rates", "value": "0.40"}, {"type":
+    "IN", "name": "upgrade_wall_insulation", "values": ["R-7.5", "R-10", "R-15", "R-20"]}]},
+    {"type": "AND", "clauses": [{"type": "EQUALS", "name": "adjust_infiltration_rates",
+    "value": "0.40"}, {"type": "EQUALS", "name": "upgrade_window_u_value", "value":
+    "None"}]}, {"type": "AND", "clauses": [{"type": "EQUALS", "name": "adjust_infiltration_rates",
+    "value": "0.60"}, {"type": "IN", "name": "upgrade_wall_insulation", "values":
+    ["R-7.5", "R-10"]}]}, {"type": "AND", "clauses": [{"type": "EQUALS", "name": "adjust_infiltration_rates",
+    "value": "0.60"}, {"type": "EQUALS", "name": "upgrade_window_u_value", "value":
+    "None"}]}, {"type": "AND", "clauses": [{"type": "EQUALS", "name": "adjust_infiltration_rates",
+    "value": "0.75"}, {"type": "IN", "name": "upgrade_wall_insulation", "values":
+    ["R-7.5", "R-10"]}]}, {"type": "AND", "clauses": [{"type": "EQUALS", "name": "upgrade_window_shgc",
+    "value": "None"}, {"type": "IN", "name": "upgrade_window_u_value", "values": ["0.32",
+    "0.28", "0.22", "0.18"]}]}, {"type": "AND", "clauses": [{"type": "EQUALS", "name":
+    "upgrade_window_u_value", "value": "None"}, {"type": "IN", "name": "upgrade_window_shgc",
+    "values": ["0.25", "0.35", "0.40"]}]}], "python_module_version": "1.2.0", "format_version":
+    0.4}'
   random_state: 42
   solution_selection: argmax_obs
   stopper: null
   surrogate_model: ET
-  surrogate_model_kwargs: null
-  type: ConstraintAwareCBO
+  surrogate_model_kwargs:
+    max_features: sqrt
+    min_impurity_decrease: 0.001
+    n_estimators: 100
+    random_state: 42
+    splitter: random
+  type: CBO
   verbose: 1

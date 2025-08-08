@@ -2,8 +2,8 @@
 # UpgradeRoofInsulation 
 #
 # Author:  Robert Donohue, enviENERGY Studio LLC
-# Version: 0.1.0
-# Date:    2025-06-13
+# Version: 0.2.0
+# Date:    2025-06-22
 # -----------------------------------------------------------------------------------------------
 
 
@@ -18,7 +18,7 @@ class UpgradeRoofInsulation < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for roof R-value
         choices = OpenStudio::StringVector.new
-        choices << 'None'
+        choices << 'R-15'    # Baseline
         choices << 'R-20'
         choices << 'R-30'
         choices << 'R-40'
@@ -26,7 +26,7 @@ class UpgradeRoofInsulation < OpenStudio::Measure::ModelMeasure
         # set your selection default to None
         r_value_option = OpenStudio::Measure::OSArgument.makeChoiceArgument('r_value_option', choices, true)
         r_value_option.setDisplayName('Select Target Roof R-Value')
-        r_value_option.setDefaultValue('None')
+        r_value_option.setDefaultValue('R-15')
         args << r_value_option
 
         # return argument vector
@@ -43,7 +43,7 @@ class UpgradeRoofInsulation < OpenStudio::Measure::ModelMeasure
         r_value_option = runner.getStringArgumentValue('r_value_option', user_arguments)
 
         # return early if None is selected
-        if r_value_option == 'None'
+        if r_value_option == 'R-15'
             runner.registerInfo('No change made to roof insulation.')
             return true
         end

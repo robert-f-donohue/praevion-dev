@@ -3,8 +3,8 @@
   <schema_version>3.1</schema_version>
   <name>add_in_unit_erv</name>
   <uid>61e0ac62-f6e9-4aa7-9453-c0fe94ef9609</uid>
-  <version_id>6050b2d5-cff7-44b6-a517-4eda4aba7daa</version_id>
-  <version_modified>2025-06-15T22:31:38Z</version_modified>
+  <version_id>61d3ec7b-944e-4392-9e42-04203b6f3072</version_id>
+  <version_modified>2025-06-22T18:37:24Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>AddInUnitERV</class_name>
   <display_name>Add In Unit ERV</display_name>
@@ -17,11 +17,11 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>No ERV</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>No ERV</value>
+          <display_name>No ERV</display_name>
         </choice>
         <choice>
           <value>Add ERV</value>
@@ -85,7 +85,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>BE485573</checksum>
+      <checksum>D99F39AF</checksum>
     </file>
   </files>
 </measure>

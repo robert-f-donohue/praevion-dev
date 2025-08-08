@@ -2,8 +2,8 @@
 # AdjustInfiltrationRates
 #
 # Author:  Robert Donohue, enviENERGY Studio LLC
-# Version: 0.1.0
-# Date:    2025-06-13
+# Version: 0.2.0
+# Date:    2025-06-22
 # -----------------------------------------------------------------------------------------------
 
 class AdjustInfiltrationRates < OpenStudio::Measure::ModelMeasure
@@ -17,15 +17,16 @@ class AdjustInfiltrationRates < OpenStudio::Measure::ModelMeasure
 
         # dropdown with options for air leakage rates (cfm/sf envelope area)
         choices = OpenStudio::StringVector.new
-        choices << 'None'
-        choices << '0.80'
+        choices << '1.00'
+        choices << '0.90'
+        choices << '0.75'
         choices << '0.60'
         choices << '0.40'
 
         # set your selection default to None
         infiltration_option  = OpenStudio::Measure::OSArgument.makeChoiceArgument('infiltration_option', choices, true)
         infiltration_option .setDisplayName('Select Target Air Leakage Rate (cfm/sf envelope area)')
-        infiltration_option .setDefaultValue('None')
+        infiltration_option .setDefaultValue('1.00') # default to 1.00 cfm/sf
         args << infiltration_option 
 
         # return argument vector
@@ -42,7 +43,7 @@ class AdjustInfiltrationRates < OpenStudio::Measure::ModelMeasure
         infiltration_option  = runner.getStringArgumentValue('infiltration_option', user_arguments)
 
         # return early if None is selected
-        if infiltration_option == 'None'
+        if infiltration_option == '1.00'
             runner.registerInfo('No change made to air leakage rate.')
             return true
         end

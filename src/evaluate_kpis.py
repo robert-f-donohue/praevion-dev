@@ -9,13 +9,15 @@ from src.parser import extract_total_energy, extract_zone_area, extract_construc
 from src.embodied import calculate_embodied_carbon_from_df
 from src.operational import calculate_operational_emissions
 from src.cost_berdo import calculate_berdo_fine_from_factors
+from src.cost_material import calculate_material_cost_from_df
+from src.cost_utility import calculate_discounted_utility_costs
 from src.run_simulation import run_osw_and_get_csv_path
 from src.generate_osw import generate_osw_from_config
 
 from praevion_async_core.paths import RUN_LOGS_DIR
 from praevion_async_core.utils.logging_utils import clean_output_dir
 
-def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path):
+def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_path, threshold_input_path, mat_cost_input_path, utility_rate_input_path):
     """
     Evaluates key performance indicators (KPIs) for a completed OpenStudio simulation run.
 
@@ -29,6 +31,8 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         ec_input_path (str): Path to the embodied carbon data CSV (e.g. component GWP).
         oc_input_path (str): Path to the operational emissions factor CSV (per fuel type).
         threshold_input_path (str): Path to multifamily BERDO CEI thresholds CSV.
+        mat_cost_input_path (str): Path to material costs CSV.
+        utility_rate_input_path (str): Path to utility rates CSV.
 
     Returns:
         dict: Flattened dictionary containing:
@@ -42,10 +46,15 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     df_ec = pd.read_csv(ec_input_path)
     df_oc = pd.read_csv(oc_input_path)
     df_thresholds = pd.read_csv(threshold_input_path)
+    df_material = pd.read_csv(mat_cost_input_path)
+    df_rates = pd.read_csv(utility_rate_input_path)
 
     # Ensure consistent naming for embodied carbon calculations by enforcing all measures be lower case
     df_ec["measure_name"] = df_ec["measure_name"].str.strip().str.lower()
     df_ec["argument_value"] = df_ec["argument_value"].astype(str).str.strip().str.lower()
+
+    df_material["measure_name"] = df_material["measure_name"].str.strip().str.lower()
+    df_material["argument_value"] = df_material["argument_value"].astype(str).str.strip().str.lower()
 
     # Parse .osw for selections
     selections = extract_measure_selections(osw_path)
@@ -53,7 +62,8 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     # Extract surface and zone metrics
     surface_areas = extract_construction_areas(csv_path)
     zone_data = extract_zone_area(csv_path)
-    total_floor_area_ft2 = zone_data['total_floor_area_m2'] * 10.7639
+    total_floor_area_m2 = zone_data['total_floor_area_m2']
+    total_floor_area_ft2 = total_floor_area_m2 * 10.7639
     apartment_floor_area_m2 = zone_data['apartment_floor_area_m2']
     apartment_count = zone_data['apartment_count']
 
@@ -64,6 +74,7 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
     ec = calculate_embodied_carbon_from_df(
         selections=selections,
         surface_areas=surface_areas,
+        total_floor_area=total_floor_area_m2,
         apartment_floor_area=apartment_floor_area_m2,
         apartment_count=apartment_count,
         df_ec=df_ec
@@ -74,6 +85,12 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         natural_gas_mmbtu=energy['natural_gas_mmbtu'],
         df_factors=df_oc
     )
+    
+    utility_cost_usd = calculate_discounted_utility_costs(
+        electricity_mmbtu=energy['electricity_mmbtu'],
+        natural_gas_mmbtu=energy['natural_gas_mmbtu'],
+        df_rates=df_rates
+    )
 
     fine_usd = calculate_berdo_fine_from_factors(
         electricity_mmbtu=energy['electricity_mmbtu'],
@@ -83,6 +100,15 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         df_thresholds=df_thresholds
     )
 
+    mat_cost = calculate_material_cost_from_df(
+        selections=selections,
+        surface_areas=surface_areas,
+        total_floor_area=total_floor_area_m2,
+        apartment_floor_area=apartment_floor_area_m2,
+        apartment_count=apartment_count,
+        df_material=df_material
+    )
+
     # Combine everything into one dictionary
     return {
         "osw_path": os.path.abspath(osw_path),
@@ -90,10 +116,12 @@ def evaluate_kpis_from_osw_and_csv(osw_path, csv_path, ec_input_path, oc_input_p
         **selections,
         **ec,
         **oc,
-        **fine_usd
+        **fine_usd,
+        **mat_cost,
+        **utility_cost_usd
     }
 
-def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
+def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds, df_material, df_rates):
     """
     Run a full simulation + KPI evaluation pipeline from a single ECM config dictionary.
 
@@ -102,14 +130,16 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
         df_factors (str): Path to operational carbon inputs CSV.
         df_embodied (str): Path to embodied carbon inputs CSV.
         df_thresholds (str): Path to BERDO threshold CSV.
+        df_material (str): Path to material costs CSV.
+        df_rates (str): Path to utility rates CSV.
 
     Returns:
-        dict: Contains both total and component-level metrics for EC, OC, and Cost, as well as file paths and selections.
+        dict: Contains both total and component-level metrics for EC, OC, BERDO fines, and material, as well as file paths and selections.
     """
 
     # Setup input file paths
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    ecm_options_path = os.path.join(project_root, "3-ecm_definitions", "ecm_options.json")
+    ecm_options_path = os.path.join(project_root, "3-ecm_definitions", "ecm_options_complex.json")
     seed_file = os.path.join(project_root, "1-openstudio-models", "cluster4-existing-condition.osm")
     weather_file = os.path.join(project_root, "1-openstudio-models", "USA_MA_Boston-Logan.Intl.AP.725090_TMY3.epw")
 
@@ -145,7 +175,8 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
                 "csv_path": None,
                 "total_emissions_kg": float("inf"),
                 "total_ec_kg": float("inf"),
-                "berdo_fine_usd": float("inf")
+                "berdo_fine_usd": float("inf"),
+                "material_cost_usd": float("inf")
             }
         else:
             raise
@@ -155,5 +186,7 @@ def evaluate_kpis_from_config(config, df_factors, df_embodied, df_thresholds):
         csv_path=csv_path,
         ec_input_path=df_embodied,
         oc_input_path=df_factors,
-        threshold_input_path=df_thresholds
+        threshold_input_path=df_thresholds,
+        mat_cost_input_path=df_material,
+        utility_rate_input_path=df_rates
     )

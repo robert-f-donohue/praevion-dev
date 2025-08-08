@@ -3,8 +3,8 @@
   <schema_version>3.1</schema_version>
   <name>adjust_infiltration_rates</name>
   <uid>b4eb5b35-4755-494d-827f-ca419ea1884d</uid>
-  <version_id>68a03817-f256-40b6-924d-2a4706e831b6</version_id>
-  <version_modified>2025-06-15T23:43:29Z</version_modified>
+  <version_id>699d01e3-13ed-4739-b777-aac289a6def6</version_id>
+  <version_modified>2025-06-23T15:26:10Z</version_modified>
   <xml_checksum>B6D1B2F0</xml_checksum>
   <class_name>AdjustInfiltrationRates</class_name>
   <display_name>Adjust Infiltration Rates</display_name>
@@ -17,15 +17,19 @@
       <type>Choice</type>
       <required>true</required>
       <model_dependent>false</model_dependent>
-      <default_value>None</default_value>
+      <default_value>1.00</default_value>
       <choices>
         <choice>
-          <value>None</value>
-          <display_name>None</display_name>
+          <value>1.00</value>
+          <display_name>1.00</display_name>
         </choice>
         <choice>
-          <value>0.80</value>
-          <display_name>0.80</display_name>
+          <value>0.90</value>
+          <display_name>0.90</display_name>
+        </choice>
+        <choice>
+          <value>0.75</value>
+          <display_name>0.75</display_name>
         </choice>
         <choice>
           <value>0.60</value>
@@ -93,7 +97,7 @@
       <filename>measure.rb</filename>
       <filetype>rb</filetype>
       <usage_type>script</usage_type>
-      <checksum>DF7CB8C5</checksum>
+      <checksum>398B50FF</checksum>
     </file>
   </files>
 </measure>

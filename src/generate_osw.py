@@ -8,7 +8,7 @@ def generate_osw_from_config(config, ecm_options_path, output_path, seed_file, w
 
     Parameters:
         config (dict): ECM configuration {measure_name: option}
-        ecm_options_path (str): Path to the ecm_options.json file
+        ecm_options_path (str): Path to the ecm_options_simple.json file
         output_path (str): Path to save the generated .osw file
         seed_file (str): Path to the baseline .osm model
         weather_file (str): Path to the .epw weather file
@@ -37,7 +37,6 @@ def generate_osw_from_config(config, ecm_options_path, output_path, seed_file, w
         "upgrade_window_shgc",
         "adjust_infiltration_rates",
         "upgrade_hvac_system_choice",
-        "add_in_unit_erv",
         "upgrade_dhw_to_hpwh"
     ]
 
