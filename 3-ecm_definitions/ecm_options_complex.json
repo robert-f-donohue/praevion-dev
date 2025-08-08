@@ -11,7 +11,7 @@
   },
   "upgrade_window_u_value": {
     "measure_dir": "2-measures/windows/upgrade_window_u_value",
-    "argument_key": "shgc_value_option",
+    "argument_key": "u_value_option",
     "options": ["None", "0.32", "0.28", "0.22", "0.18"]
   },
   "upgrade_window_shgc": {

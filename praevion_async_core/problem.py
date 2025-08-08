@@ -28,7 +28,7 @@ window_shgc_value_hp = problem.add_hyperparameter(
     value=["None", "0.25", "0.35", "0.40"], name="upgrade_window_shgc"
 )
 inf_rate_hp = problem.add_hyperparameter(
-    value=["1.00","0.90", "0.80", "0.75", "0.70"], name="adjust_infiltration_rates"
+    value=["1.00","0.90", "0.75", "0.60", "0.40"], name="adjust_infiltration_rates"
 )
 hvac_hp = problem.add_hyperparameter(
     value=["Baseline", "Condensing Boiler","Mini-Split", "Packaged HP"], name="upgrade_hvac_system_choice"
@@ -38,18 +38,21 @@ dhw_hp = problem.add_hyperparameter(
 )
 
 # Condition 1: U-value & SHGC Pairing
-window_condition_1 = cs.InCondition(
-    child=window_shgc_value_hp, parent=window_u_value_hp, values=["0.32", "0.28", "0.22", "0.18"]
+window_condition_1 = cs.ForbiddenAndConjunction(
+    cs.ForbiddenEqualsClause(window_shgc_value_hp, "None"),
+    cs.ForbiddenInClause(window_u_value_hp, ["0.32", "0.28", "0.22", "0.18"])
 )
-window_condition_2 = cs.InCondition(
-    child=window_u_value_hp, parent=window_shgc_value_hp, values=["0.25", "0.35", "0.40"]
+window_condition_2 = cs.ForbiddenAndConjunction(
+    cs.ForbiddenEqualsClause(window_u_value_hp, "None"),
+    cs.ForbiddenInClause(window_shgc_value_hp, ["0.25", "0.35", "0.40"])
 )
-problem.add_conditions([window_condition_1, window_condition_2])
+problem.add_forbidden_clause(window_condition_1)
+problem.add_forbidden_clause(window_condition_2)
 
 # Condition 2: Infiltration Rate = 0.40
 forbidden_clause_wall_1 = cs.ForbiddenAndConjunction(
     cs.ForbiddenEqualsClause(inf_rate_hp, "0.40"),
-    cs.ForbiddenInClause(wall_hp, ["R-7.5", "R-10", "R-15", "R-20"])
+    cs.ForbiddenInClause(wall_hp, ["R-7.5", "R-10", "R-15"])
 )
 forbidden_clause_window_1 = cs.ForbiddenAndConjunction(
     cs.ForbiddenEqualsClause(inf_rate_hp, "0.40"),
@@ -73,7 +76,7 @@ problem.add_forbidden_clause(forbidden_clause_window_2)
 # Condition 4: Infiltration Rate = 0.75
 forbidden_clause_wall_3 = cs.ForbiddenAndConjunction(
     cs.ForbiddenEqualsClause(inf_rate_hp, "0.75"),
-    cs.ForbiddenInClause(wall_hp, ["R-7.5", "R-10"])
+    cs.ForbiddenInClause(wall_hp, ["R-7.5"])
 )
 problem.add_forbidden_clause(forbidden_clause_wall_3)
 
@@ -82,4 +85,10 @@ problem.num_objectives = 4
 
 # Print the search space if run as a script (for debugging or CLI use)
 if __name__ == "__main__":
+    print("Output from calling problem:")
     print(problem)
+
+    space = problem.space.get_hyperparameters()
+    print("Output from calling problem.space.get_hyperparameters:")
+    print(space)
+

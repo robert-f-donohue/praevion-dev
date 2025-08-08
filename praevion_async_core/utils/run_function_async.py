@@ -38,7 +38,7 @@ def run_function(config: dict):
 
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     run_id = f"opt_{timestamp}_{uuid.uuid4().hex[:8]}"
-    kpi_log_path = os.path.join(LOG_DIR, f"results_{timestamp}.jsonl")
+    kpi_log_path = os.getenv("KPI_LOG_PATH", os.path.join(LOG_DIR, "kpi_log_fallback.jsonl"))
     os.makedirs(LOG_DIR, exist_ok=True)
 
     # Unpack RunningJob object
@@ -67,21 +67,38 @@ def run_function(config: dict):
         berdo_fine_usd = kpis["berdo_fine_usd"]
         material_cost_usd = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
         utility_cost_usd = kpis["discounted_utility_cost_usd"] if kpis["discounted_utility_cost_usd"] > 0 else 1.0
-        longrun_cost_usd = material_cost_usd + utility_cost_usd
+
+
+        # BERDO fine at net utility min
+        net_berdo_min = 74_620
+
+        # Utility cost metrics
+        utility_cost_baseline = 2_184_813
+        utility_cost_max = 3_693_027
+        utility_cost_min = 1_638_838
+
+        # Net utility cost metrics
+        net_utility_cost_max = utility_cost_max - utility_cost_baseline
+        net_utility_cost_min = utility_cost_min - utility_cost_baseline
+        net_utility_cost = utility_cost_usd - utility_cost_baseline
+
+        # Long run cost metrics
+        net_longrun_cost = net_utility_cost + berdo_fine_usd
 
         # Theoretical maximums for normalization
-        max_oc = 5_552_000
-        max_ec = 464_000
-        max_mat_cost = 1_167_000
-        max_longrun_cost = 1_500_000
+        max_oc = 5_515_869
+        max_ec = 476_657
+        max_mat_cost = 1_209_421
+        net_longrun_cost_max = net_utility_cost_max + 1
 
         # Theoretical minimums for operational carbon emissions
-        min_oc = 1_508_000
+        min_oc = 1_355_578
+        net_longrun_cost_min = net_utility_cost_min + net_berdo_min
 
         # Normalize objective values
         oc_normalized = (operational_carbon_kg - min_oc) / (max_oc - min_oc)
         ec_normalized = embodied_carbon_kg / max_ec
-        longrun_normalized = longrun_cost_usd / max_longrun_cost
+        longrun_normalized = (net_longrun_cost - net_longrun_cost_min) / (net_longrun_cost_max - net_longrun_cost_min)
         material_normalized = material_cost_usd / max_mat_cost
 
         # Gather the objective values to be fed in the MOO engine
@@ -102,7 +119,8 @@ def run_function(config: dict):
                 "operational_carbon_kg": operational_carbon_kg,
                 "embodied_carbon_kg": embodied_carbon_kg,
                 "berdo_fine_usd": berdo_fine_usd,
-                "longrun_cost_usd": longrun_cost_usd,
+                "utility_cost_usd": utility_cost_usd,
+                "longrun_cost_usd": net_longrun_cost,
                 "material_cost_usd": material_cost_usd,
                 "normalized_objective_values": objective_values
             }
