@@ -2,6 +2,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
+# Main model path
+MAIN_DIR = REPO_ROOT / "praevion_core" / "interfaces" / "cli"
+
 # Input file paths
 DATA_DIR = REPO_ROOT / "data"
 

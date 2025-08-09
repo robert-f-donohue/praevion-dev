@@ -166,27 +166,6 @@ def archive_run_logs(run_logs_dir: str, archive_base: str):
         f" ({reduction_pct:.1f}% smaller)"
     )
 
-
-def save_best_log(best_log: list, acq_func: str = "ucb"):
-    """
-    Saves a DataFrame of best-performing configs during the search to CSV.
-
-    Parameters:
-        best_log (list): List of best objective summaries during the run
-        acq_func (str): Acquisition function label for the file naming
-
-    Returns:
-        None
-    """
-    if best_log:
-        ts = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
-        os.makedirs(LOG_DIR, exist_ok=True)
-        df = pd.DataFrame(best_log)
-        out_path = os.path.join(LOG_DIR, f"best_log_{ts}_{acq_func}.csv")
-        df.to_csv(out_path, index=False)
-        print(f"📈 Best objective history saved to {out_path}")
-
-
 def delete_heavy_outputs(run_dir: str):
     """
     Deletes large or unnecessary files from a completed OpenStudio simulation run directory.

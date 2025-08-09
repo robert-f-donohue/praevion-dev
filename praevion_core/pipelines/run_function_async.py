@@ -1,35 +1,69 @@
-import hashlib
-import json
 import os
 import sys
 import uuid
+import json
+import hashlib
 from datetime import UTC, datetime
-
 from deephyper.evaluator import RunningJob
-
 from praevion_core.config.paths import INPUT_DIR, LOG_DIR
+from praevion_core.config.objective_constants import CONSTANTS
 from praevion_core.domain.kpis.evaluate_kpis import evaluate_kpis_from_config
 
 # Directory for KPI logs and results
 os.makedirs(LOG_DIR, exist_ok=True)
 
-# Internal cache of best configs
-best_log = []
-__all__ = [
-    "run_function",
-    "best_log",
-    "run_function_deduplicated",
-]  # EXPOSES best_log TO ALL MODULES
-
-
-# 🔐 Shared set to store seen config hashes
-seen_config_hashes = set()
-seen_config_results = {}  # Maps hash → objective
-
-
 def hash_config(config: dict) -> str:
     """Create a consistent hash for a config dictionary."""
-    return hashlib.md5(str(sorted(config.items())).encode()).hexdigest()
+    return hashlib.md5(
+        json.dumps(config, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+def compute_objectives_from_kpis(kpis: dict, constants: dict) -> tuple[list[float], dict]:
+    oc = kpis["total_emissions_kg"]
+    ec = kpis["total_ec_kg"] if kpis["total_ec_kg"] > 0 else 1.0
+    fine = kpis["berdo_fine_usd"]
+    mat_cost = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
+    util = kpis["discounted_utility_cost_usd"]
+
+    # --- unpack constants ---
+    min_oc = constants["min_oc"]
+    max_oc = constants["max_oc"]
+
+    max_ec = constants["max_ec"]
+
+    max_mat = constants["max_mat_cost"]
+
+    util_base = constants["utility_cost_baseline"]
+    util_min = constants["utility_cost_min"]
+    util_max = constants["utility_cost_max"]
+
+    berdo_min = constants["net_berdo_min"]
+
+    net_util = util - util_base
+    net_util_min = util_min - util_base
+    net_util_max = util_max - util_base
+    net_longrun = net_util + fine
+
+    net_longrun_min = net_util_min + berdo_min
+    net_longrun_max = net_util_max
+
+    oc_n = (oc - min_oc) / (max_oc - min_oc)
+    ec_n = ec / max_ec
+    lr_n = (net_longrun - net_longrun_min) / (net_longrun_max - net_longrun_min)
+    mat_n = mat_cost / max_mat
+
+    objectives = [-oc_n, -ec_n, -lr_n, -mat_n]
+    extras = {
+        "operational_carbon_kg": oc,
+        "embodied_carbon_kg": ec,
+        "berdo_fine_usd": fine,
+        "utility_cost_usd": util,
+        "longrun_cost_usd": net_longrun,
+        "normalized_objective_values": objectives,
+        "material_cost_usd": mat_cost,
+    }
+    return objectives, extras
+
 
 
 def run_function(config: dict):
@@ -40,9 +74,8 @@ def run_function(config: dict):
         config (dict): A dictionary of selected ECM options.
 
     Returns:
-        list: Objective values [total_emissions_kg, total_ec_kg, berdo_fine_usd]
+        Returns the 4D objective vector (negated for minimization) and a metadata log entry
     """
-
     timestamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
     run_id = f"opt_{timestamp}_{uuid.uuid4().hex[:8]}"
     kpi_log_path = os.getenv("KPI_LOG_PATH", os.path.join(LOG_DIR, "kpi_log_fallback.jsonl"))
@@ -57,7 +90,7 @@ def run_function(config: dict):
     print(f"🔁 Starting config {run_id}")
 
     try:
-        # Evaluate KPIs based on currently evaluated ECM configuration
+        # Evaluate KPIs based on the currently evaluated ECM configuration
         kpis = evaluate_kpis_from_config(
             config,
             df_factors=os.path.join(INPUT_DIR, "operational-carbon-inputs.csv"),
@@ -67,56 +100,8 @@ def run_function(config: dict):
             df_rates=os.path.join(INPUT_DIR, "utility-cost-inputs.csv"),
         )
 
-        # Combine total embodied and operational carbon for engineered total carbon metric
-        operational_carbon_kg = kpis["total_emissions_kg"]
-        embodied_carbon_kg = kpis["total_ec_kg"] if kpis["total_ec_kg"] > 0 else 1.0
-        berdo_fine_usd = kpis["berdo_fine_usd"]
-        material_cost_usd = kpis["material_cost_usd"] if kpis["material_cost_usd"] > 0 else 1.0
-        utility_cost_usd = (
-            kpis["discounted_utility_cost_usd"] if kpis["discounted_utility_cost_usd"] > 0 else 1.0
-        )
-
-        # BERDO fine at net utility min
-        net_berdo_min = 74_620
-
-        # Utility cost metrics
-        utility_cost_baseline = 2_184_813
-        utility_cost_max = 3_693_027
-        utility_cost_min = 1_638_838
-
-        # Net utility cost metrics
-        net_utility_cost_max = utility_cost_max - utility_cost_baseline
-        net_utility_cost_min = utility_cost_min - utility_cost_baseline
-        net_utility_cost = utility_cost_usd - utility_cost_baseline
-
-        # Long run cost metrics
-        net_longrun_cost = net_utility_cost + berdo_fine_usd
-
-        # Theoretical maximums for normalization
-        max_oc = 5_515_869
-        max_ec = 476_657
-        max_mat_cost = 1_209_421
-        net_longrun_cost_max = net_utility_cost_max + 1
-
-        # Theoretical minimums for operational carbon emissions
-        min_oc = 1_355_578
-        net_longrun_cost_min = net_utility_cost_min + net_berdo_min
-
-        # Normalize objective values
-        oc_normalized = (operational_carbon_kg - min_oc) / (max_oc - min_oc)
-        ec_normalized = embodied_carbon_kg / max_ec
-        longrun_normalized = (net_longrun_cost - net_longrun_cost_min) / (
-            net_longrun_cost_max - net_longrun_cost_min
-        )
-        material_normalized = material_cost_usd / max_mat_cost
-
-        # Gather the objective values to be fed in the MOO engine
-        objective_values = [
-            -oc_normalized,
-            -ec_normalized,
-            -longrun_normalized,
-            -material_normalized,
-        ]
+        # Get objective values and extra information for logging
+        objectives, extras = compute_objectives_from_kpis(kpis, CONSTANTS)
 
         # Structure successful kpi_log entry
         log_entry = {
@@ -124,33 +109,14 @@ def run_function(config: dict):
             "run_id": run_id,
             "config": config,
             "success": True,
-            "objectives": {
-                "operational_carbon_kg": operational_carbon_kg,
-                "embodied_carbon_kg": embodied_carbon_kg,
-                "berdo_fine_usd": berdo_fine_usd,
-                "utility_cost_usd": utility_cost_usd,
-                "longrun_cost_usd": net_longrun_cost,
-                "material_cost_usd": material_cost_usd,
-                "normalized_objective_values": objective_values,
-            },
+            "objectives": extras,
         }
 
-        # Append summary to best_log
-        best_log.append(
-            {
-                "timestamp": timestamp,
-                "run_id": run_id,
-                "oc_total": objective_values[0],
-                "ec_total": objective_values[1],
-                "longrun_cost_total": objective_values[2],
-                "mat_cost_total": objective_values[3],
-            }
-        )
         with open(kpi_log_path, "a") as f:
             f.write(json.dumps(log_entry) + "\n")
 
-        print(f"✅ Completed config {run_id} with objectives: {objective_values}")
-        return {"objective": objective_values, "metadata": log_entry}
+        print(f"✅ Completed config {run_id} with objectives: {objectives}")
+        return {"objective": objectives, "metadata": log_entry}
 
     except Exception as e:
         print(f"❌ Failed config {run_id}: {e}")
@@ -165,20 +131,3 @@ def run_function(config: dict):
             f.write(json.dumps(log_entry) + "\n")
 
         return {"objective": [sys.float_info.max] * 4, "metadata": log_entry}
-
-
-def run_function_deduplicated(config):
-    config_hash = hash_config(config)
-
-    if config_hash in seen_config_hashes:
-        print(f"⚠️ Duplicate config — returning cached result for {config_hash}")
-        return seen_config_results[config_hash]
-
-    # Run simulation and compute objectives
-    result = run_function(config)
-
-    # Cache it
-    seen_config_hashes.add(config_hash)
-    seen_config_results[config_hash] = result
-
-    return result

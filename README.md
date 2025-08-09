@@ -5,8 +5,8 @@
 This project executes **multi-objective optimization** for building retrofit strategies using:
 - 📦 **OpenStudio/EnergyPlus** for full-building simulation
 - 🧠 **DeepHyper CBO** with tree-based surrogates for constrained, categorical search
-- 📊 **Four objectives**: Operational Carbon, Embodied Carbon, Long-run Cost (Material + Utility), and Material Cost (standalone KPI)
-- - 🎯 **Goal**: Identify Pareto-optimal retrofit configurations that minimize lifecycle emissions and costs under policy constraints like BERDO.
+- 📊 **Four objectives**: Operational Carbon, Embodied Carbon, Material Cost, and Long-run Cost (Material + Utility)
+- 🎯 **Goal**: Identify Pareto-optimal retrofit configurations that minimize lifecycle emissions and costs under policy constraints like BERDO.
 
 ---
 
@@ -29,7 +29,7 @@ This project executes **multi-objective optimization** for building retrofit str
 | Max Evaluations             | user-set (e.g., 300–700)        |
 | Initial Sobol Samples       | 256                             |
 | Acquisition Function        | qUCBd                           |
-| κ Start → Final             | 3.0 → 0.1 (periodic decay)      |
+| κ Start → Final             | 3.0 → 0.25 (periodic decay)     |
 | Scalarization               | AugChebyshev                    |
 | Objective Sign              | Negative (DeepHyper minimizes)  |
 | Fail Handling               | `[inf, inf, inf, inf]` returned |
@@ -42,13 +42,13 @@ This project executes **multi-objective optimization** for building retrofit str
 Each configuration goes through:
 
 1. **Validation** – ConfigSpace + `is_valid_config()` rules
-2. **OSW Generation** – from ECM config + `cluster4-existing-condition.osm`
+2. **OSW Generation** – ECM config + baseline `.osm`
 3. **Simulation** – OpenStudio runs, producing `eplustbl.csv`
 4. **KPI Extraction**:
    - Operational Carbon (OC)
    - Embodied Carbon (EC)
-   - BERDO Fine (USD)
    - Material Cost (USD)
+   - BERDO Fine (25 years, 3% discount rate)
    - Discounted Utility Cost (25 years, 3% discount rate)
 5. **Objective Normalization** – fixed-theoretical max/min scaling
 6. **Return to Optimizer** – 4D normalized, negated objective vector
@@ -57,17 +57,25 @@ Each configuration goes through:
 
 ## 📁 Directory Structure
 
-| Path                           | Description |
-|--------------------------------|-------------|
-| `01_models/`                   | Baseline `.osm` + `.epw` files |
-| `02_measures/`                 | OpenStudio measures (ECMs) grouped by category |
-| `03_ecm_search_spaces/`        | ECM option definitions (`ecm_options_complex.json`, etc.) |
-| `04_input_data/`               | Factor tables, thresholds, material costs, utility rates, seed configs |
-| `05_osws/`                     | Generated OSWs and `_run/` output folders |
-| `06_tests/`                    | Unit and integration tests for pipeline components |
-| `07_archive/`                  | Compressed logs, results, old OSWs, retired scripts/measures |
-| `praevion_core/`               | Optimization engine core: configs, run orchestration, logging, Sobol sampling, constraint filters |
-| `src/`                         | Simulation orchestration, KPI computation, OpenStudio interfacing |
+| Path                                   | Description |
+|----------------------------------------|-------------|
+| `data/ecm_definitions/`               | ECM option definitions (JSON) |
+| `data/inputs/`                         | Factor tables, thresholds, material costs, utility rates, seed configs |
+| `data/models/openstudio_measures/`     | OpenStudio measures grouped by category (e.g., hvac, insulation, windows) |
+| `data/models/openstudio_models/`       | Baseline `.osm` + `.epw` files |
+| `data/models/seed_configs/`            | Example ECM configuration seeds |
+| `data/osws/`                           | Generated OSWs and `_run/` outputs |
+| `logs/kpi_logs/`                        | KPI JSONL logs per configuration |
+| `logs/run_logs/`                        | Runtime logs from optimization loop |
+| `logs/summary_stats/`                   | Aggregated run summaries (Pareto size, crowding distance, etc.) |
+| `logs/archive/`                         | Old run logs and OSWs |
+| `praevion_core/config/`                 | Path constants, optimization constants |
+| `praevion_core/domain/`                 | KPI computation, carbon and cost modules |
+| `praevion_core/adapters/`               | OpenStudio/EnergyPlus execution and parsing |
+| `praevion_core/interfaces/cli/`         | CLI entry points (e.g., `main.py`) |
+| `praevion_core/pipelines/`              | Orchestrated run loops and search workflows |
+| `results/`                              | Output CSV of completed optimization runs |
+| `tests/`                                | Unit and integration tests |
 
 
 ---
@@ -84,14 +92,13 @@ Each configuration goes through:
 
 ## 🔁 Launching an Optimization Run
 
-To start an asynchronous optimization with your preferred acquisition function:
-
 ```bash
 # Example run
-python praevion_core/main.py
+python -m praevion_core.interfaces.cli.main
 ```
 
 ```bash
+# Optional: choose acquisition function
 export ACQUISITION_FUNCTION=ucb
 ```
 

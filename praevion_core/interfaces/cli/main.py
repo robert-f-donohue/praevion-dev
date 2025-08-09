@@ -1,12 +1,15 @@
 import os
-from datetime import UTC, datetime
-
 import pandas as pd
-from deephyper.evaluator import Evaluator
+from datetime import UTC, datetime
+from pathlib import Path
 from deephyper.hpo import CBO
+from deephyper.evaluator import Evaluator
 
+from praevion_core.config.problem import problem
+from praevion_core.pipelines.run_function_async import run_function
+from praevion_core.pipelines.sobol_sampler import generate_filtered_sobol_samples
 from praevion_core.config.paths import (
-    BASE_DIR,
+    REPO_ROOT,
     LOG_DIR,
     OSW_DIR,
     RESULTS_ARCHIVE,
@@ -14,7 +17,6 @@ from praevion_core.config.paths import (
     RUN_LOGS_DIR,
     SUMMARY_DIR,
 )
-from praevion_core.config.problem import problem
 from praevion_core.pipelines.logging_utils import (
     archive_logs,
     archive_osws,
@@ -22,11 +24,8 @@ from praevion_core.pipelines.logging_utils import (
     clean_batch_folders,
     expand_objectives_column,
     log_optimization_summary_to_csv,
-    save_best_log,
     save_results_csv,
 )
-from praevion_core.pipelines.run_function_async import best_log, run_function_deduplicated
-from praevion_core.pipelines.sobol_sampler import generate_filtered_sobol_samples
 
 # Select which acquisition function is to be used in simulation (supports EI and UCB)
 desired_acquisition_function = "ucb"
@@ -64,7 +63,7 @@ def main():
     # ⚙️ Launch DeepHyper evaluation context
     num_cpu_workers = 8
     with Evaluator.create(
-        run_function=run_function_deduplicated,
+        run_function=run_function,
         method="process",
         method_kwargs={"num_workers": num_cpu_workers},
     ) as evaluator:
@@ -101,7 +100,6 @@ def main():
         # 💾 Save search results and best log
         save_results_csv(search, run_label)
         expand_objectives_column(os.path.join(RESULTS_DIR, f"results_{run_label}.csv"))
-        save_best_log(best_log, acq_func=ACQUISITION_FUNCTION)
 
         # Save summary stats log
         summary_log_path = os.path.join(SUMMARY_DIR, "optimization_runs_summary.csv")
@@ -119,10 +117,11 @@ def main():
         )
 
         # 🧹 Remove internal DeepHyper results.csv
-        internal_csv = os.path.join("../../..", BASE_DIR, "results.csv")
-        if os.path.exists(internal_csv):
-            os.remove(internal_csv)
-            print("🧹 Removed internal DeepHyper results.csv file to avoid clutter.")
+        for p in [Path.cwd() / "results.csv", REPO_ROOT / "results.csv"]:
+            # Don’t touch your curated results folder
+            if p.exists() and RESULTS_DIR not in p.parents:
+                p.unlink()
+                print(f"🧹 Removed internal DeepHyper results.csv at {p}")
 
         print("\n🎉 Optimization run completed successfully!")
         print("📈 Results saved, logs archived, and OSW/result files compressed.")
